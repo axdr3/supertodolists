@@ -7,5 +7,5 @@ class List(models.Model):
 
 class Item(models.Model):
 	text = models.TextField(blank=True)
-	list = models.ForeignKey(List, default=None, on_delete=models.CASCADE)
+	list = models.ForeignKey(List, blank=True, null=True, on_delete=models.CASCADE)
 
