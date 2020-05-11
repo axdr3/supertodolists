@@ -1,18 +1,39 @@
 <html lang="en">
+{% load static %}
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{% static 'lists/bootstrap/css/bootstrap.min.css' %}" media="screen">
+	<link rel="stylesheet" href="{% static 'lists/css/base.css' %}" media="screen">
 	<title>To-Do lists </title>
 </head>
 <body>
-	<h1>{% block header_text %}
-	    
-	{% endblock header_text %}</h1>
-	<form method="POST" action="{% block form_action %}{% endblock %}">
-		<input name="item_text" type="text" id="id_new_item" placeholder="Enter a to-do item">	
-		{% csrf_token %}
-	</form>
-	{% block table %}
-	    
-	{% endblock table %}
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 jumbotron">
+				<div class="text-center">
+					<h1>{% block header_text %}
+					    
+					{% endblock header_text %}</h1>
+					<form method="POST" action="{% block form_action %}{% endblock %}">
+						<input name="item_text" type="text" id="id_new_item" 
+						class="form-control input-lg" placeholder="Enter a to-do item">	
+						{% csrf_token %}
+					</form>
+					
+				</div>
+			</div>
+		</div>	
+	
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="text-center">
+
+				{% block table %}
+				    
+				{% endblock table %}
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
