@@ -5,13 +5,13 @@
 # fi
 
 # first arg
-domain = "$1"
+# domain = "$1"
 #second arg
-user = "$2"
+# user = "$2"
 
 echo `pwd`
 
-cat ginx.template.conf \
+cat ./deploy_tools/ginx.template.conf \
 | sed "s/DOMAIN/$1/g" \
 | sed "s/USER/$2/g" \
 | sudo tee /etc/nginx/sites-available/$1
@@ -19,7 +19,7 @@ cat ginx.template.conf \
 sudo ln -s /etc/nginx/sites-available/$1 \
     /etc/nginx/sites-enabled/$1
 
-cat  gunicorn-systemd.template.service \
+cat  ./deploy_tools/gunicorn-systemd.template.service \
 | sed "s/DOMAIN/$1/g" \
 | sed "s/USER/$2/g" \
 | sudo tee /etc/systemd/system/gunicorn-$1.service
