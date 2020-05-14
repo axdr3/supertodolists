@@ -2,7 +2,7 @@
 #requires to be inside deploy_tools folder
 if [ "$1" == ""]; then
 	exit 1
-
+fi
 
 # first arg
 domain = $1
@@ -27,4 +27,5 @@ sudo systemctl reload nginx
 sudo systemctl enable gunicorn-$domain
 sudo systemctl restart gunicorn-$domain
 
+echo 'Provisioning Successfully Completed!'
 exit 0
