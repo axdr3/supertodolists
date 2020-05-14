@@ -11,7 +11,7 @@
 
 echo `pwd`
 
-cat ./deploy_tools/ginx.template.conf \
+cat ./deploy_tools/nginx.template.conf \
 | sed "s/DOMAIN/$1/g" \
 | sed "s/USER/$2/g" \
 | sudo tee /etc/nginx/sites-available/$1
