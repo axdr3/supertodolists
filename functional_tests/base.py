@@ -34,3 +34,16 @@ class FunctionalTest(StaticLiveServerTestCase):
 				if time.time() - start_time > MAX_WAIT:
 					raise e
 				time.sleep(0.5)
+
+	# 	The body of our try/except, instead of being the specific code for examining
+	# table rows, just becomes a call to the function we passed in. We also return
+	# its return value to be able to exit the loop immediately if no exception is raised.
+	def wait_for(self, fn):
+		start_time = time.time()
+		while True:
+			try:
+				return fn()
+			except (AssertionError, WebDriverException) as e:
+				if time.time() - start_time > MAX_WAIT:
+					raise e
+				time.sleep(0.5)
