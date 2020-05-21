@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 {% load static %}
 <head>
@@ -12,28 +13,35 @@
 			<div class="col-sm-12 jumbotron">
 				<div class="text-center">
 					<h1>{% block header_text %}
-					    
+
 					{% endblock header_text %}</h1>
 					<form method="POST" action="{% block form_action %}{% endblock %}">
-						<input name="item_text" type="text" id="id_new_item" 
-						class="form-control input-lg" placeholder="Enter a to-do item">	
+						<input name="item_text" type="text" id="id_new_item"
+						class="form-control form-control-lg" placeholder="Enter a to-do item">
 						{% csrf_token %}
+						{% if error %}
+						    <div class="form-group invalid-feedback">
+						    	<span class="form-text">{{error}}</span>
+						    </div>
+						{% endif %}
 					</form>
-					
+
 				</div>
 			</div>
-		</div>	
-	
+		</div>
+
 		<div class="row">
 			<div class="col-sm-6">
 				<div class="text-center">
-
 				{% block table %}
-				    
+
 				{% endblock table %}
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<script type="text/javascript" src="{% static 'lists/bootstrap/js/bootstrap.min.js' %}"></script>
+
 </body>
 </html>

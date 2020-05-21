@@ -1,12 +1,6 @@
-from selenium import webdriver
+# from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from unittest import skip
 from .base import FunctionalTest
-import time
-import os
-
-
-MAX_WAIT = 10
 
 
 class ItemValidationTest(FunctionalTest):
@@ -19,10 +13,12 @@ class ItemValidationTest(FunctionalTest):
 
 		# The home page refreshes, and there is an error message saying
 		# that list items cannot be blank
+		# print(self.browser.find_element_by_css_selector('div.invalid-feedback').text)
 		self.wait_for(lambda: self.assertEqual(
-			self.browser.find_element_by_css_selector('.has-error').text,
+			self.browser.find_element_by_css_selector('div.invalid-feedback').text,
 			"You can't have an empty list item"
 		))
+
 		# She tries again with some text for the item, which now works
 		self.browser.find_element_by_id('id_new_item').send_keys('Buy milk')
 		self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
@@ -32,11 +28,12 @@ class ItemValidationTest(FunctionalTest):
 		self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
 		# She receives a similar warning on the list page
 		self.wait_for(lambda: self.assertEqual(
-			self.browser.find_element_by_css_selector('.has-error').text,
+			self.browser.find_element_by_css_selector('div.invalid-feedback').text,
 			"You can't have an empty list item"
 		))
+
 		# And she can correct it by filling some text in
 		self.browser.find_element_by_id('id_new_item').send_keys('Make tea')
-	    self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
-	    self.wait_for_row_in_list_table('1: Buy milk')
-	    self.wait_for_row_in_list_table('2: Make tea')
+		self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
+		self.wait_for_row_in_list_table('1: Buy milk')
+		self.wait_for_row_in_list_table('2: Make tea')
