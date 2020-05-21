@@ -20,8 +20,8 @@
 						class="form-control form-control-lg" placeholder="Enter a to-do item">
 						{% csrf_token %}
 						{% if error %}
-						    <div class="form-group invalid-feedback">
-						    	<span class="form-text">{{error}}</span>
+						    <div class="form-group show-errors">
+						    	<span class="text-muted">{{ error }}</span>
 						    </div>
 						{% endif %}
 					</form>

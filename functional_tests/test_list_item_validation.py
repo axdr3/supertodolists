@@ -1,7 +1,7 @@
 # from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from .base import FunctionalTest
-
+import time
 
 class ItemValidationTest(FunctionalTest):
 
@@ -15,7 +15,7 @@ class ItemValidationTest(FunctionalTest):
 		# that list items cannot be blank
 		# print(self.browser.find_element_by_css_selector('div.invalid-feedback').text)
 		self.wait_for(lambda: self.assertEqual(
-			self.browser.find_element_by_css_selector('div.invalid-feedback').text,
+			self.browser.find_element_by_css_selector('div.show-errors').text,
 			"You can't have an empty list item"
 		))
 
@@ -23,12 +23,12 @@ class ItemValidationTest(FunctionalTest):
 		self.browser.find_element_by_id('id_new_item').send_keys('Buy milk')
 		self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
 		self.wait_for_row_in_list_table('1: Buy milk')
-
+		time.sleep(0.5)
 		# Perversely, she now decides to submit a second blank list item
 		self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
 		# She receives a similar warning on the list page
 		self.wait_for(lambda: self.assertEqual(
-			self.browser.find_element_by_css_selector('div.invalid-feedback').text,
+			self.browser.find_element_by_css_selector('div.show-errors').text,
 			"You can't have an empty list item"
 		))
 
