@@ -5,6 +5,7 @@ from django.utils.html import escape
 from django.template.loader import render_to_string
 from ..models import Item, List
 from ..views import home_page
+from lists.forms import ItemForm
 import re
 
 # Create your tests here.
@@ -39,6 +40,10 @@ class HomePageTest(TestCase):
 			remove_csrf(response.content.decode()),
 			remove_csrf(expected_html)
 		)
+
+	def test_home_page_uses_item_form(self):
+		response = self.client.get('/')
+		self.assertIsInstance(response.context['form'], ItemForm)
 
 
 class ListViewTest(TestCase):
