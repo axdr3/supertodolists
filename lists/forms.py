@@ -26,9 +26,17 @@ class ItemForm(forms.models.ModelForm):
 	# including manually creating the object yourself, or using the commit=False argument to save,
 	# but this is the neatest I think. We’ll explore a different way of making a form "know" what
 	# list it’s for in the next chapter:
-	def save(self, for_list):
-		self.instance.list = for_list
-		return super().save()
+	def save(self):
+		return forms.models.ModelForm.save(self)
+
+
+"""
+
+The form to create a new list only needs to know one thing, the new item text. A form which validates
+that list items are unique, needs to know the list too. Just as we overrode the save method on our ItemForm,
+this time we’ll override the constructor on our new form class so that it knows what list it applies to.
+
+"""
 
 
 class ExistingListItemForm(ItemForm):
