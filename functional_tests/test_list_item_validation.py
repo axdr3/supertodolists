@@ -4,7 +4,11 @@ from .base import FunctionalTest
 from lists.tests.test_forms import DUPLICATE_ITEM_ERROR
 import time
 
+
 class ItemValidationTest(FunctionalTest):
+
+	def get_error_element(self):
+		return self.browser.find_element_by_css_selector('.show-errors')
 
 	def test_cannot_add_empty_list_items(self):
 		# Edith goes to the home page and accidentally tries to submit
@@ -60,7 +64,7 @@ class ItemValidationTest(FunctionalTest):
 		time.sleep(0.5)
 
 		self.wait_for(lambda: self.assertEqual(
-			self.browser.find_element_by_css_selector('.show-errors').text,
+			self.get_error_element().text,
 			DUPLICATE_ITEM_ERROR)
 		)
 
@@ -72,3 +76,25 @@ class ItemValidationTest(FunctionalTest):
 		# Verify it hasn't accepted same item
 		self.wait_for_row_in_list_table('1: Buy milk')
 		self.wait_for_row_in_list_table('2: Buy dope')
+
+	def test_error_messages_are_cleared_on_input(self):
+		# Edith starts a list and causes a validation error:
+		self.browser.get(self.live_server_url)
+		self.get_item_input_box().send_keys('Banter too thick')
+		self.get_item_input_box().send_keys(Keys.ENTER)
+		self.wait_for_row_in_list_table('1: Banter too thick')
+		self.get_item_input_box().send_keys('Banter too thick')
+		self.get_item_input_box().send_keys(Keys.ENTER)
+
+		# is_displayed() tells you whether an element is visible or not.
+		self.wait_for(lambda: self.assertTrue(
+			self.get_error_element().is_displayed()
+		))
+
+		# She starts typing in the input box to clear the error
+		self.get_item_input_box().send_keys('a')
+
+		# She is pleased to see that the error message disappears
+		self.wait_for(lambda: self.assertFalse(
+			self.get_error_element().is_displayed()
+		))
