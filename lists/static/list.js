@@ -19,6 +19,7 @@ window.Supertodolists = {};
 window.Supertodolists.initialize = function(){
 	// console.log('AAAA')
 	// debugger;
+	$('input[name="text"]').val('')
 	$('input[name="text"]').on('keypress', function () {
 	  $('.show-errors').hide();
 	});
