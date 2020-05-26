@@ -22,13 +22,13 @@
 
 <script>
 QUnit.test("errors should be hidden on keypress", function (assert) {
-	initialize()
+	window.Supertodolists.initialize()
 	$('input[name="text"]').trigger('keypress');
   	assert.equal($('.show-errors').is(':visible'), false);
 });
 
 QUnit.test("errors aren't hidden if there is no keypress", function (assert) {
-	initialize()
+	window.Supertodolists.initialize()
  	assert.equal($('.show-errors').is(':visible'), true);
 });
 </script>
