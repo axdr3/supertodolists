@@ -12,12 +12,10 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
 		    <div class="container-fluid">
 		      <a class="form-inline" href="/">Supertodolists</a>
-		      {{ user.is_authenticated }}
-		      {{ user.backend }}
 		      {% if user.email %}
 		          <ul class="nav navbar-nav navbar-right">
 			        <li class="navbar-text">Logged in as {{ user.email }}</li>
-			        <li><a href="#">Log out</a></li>
+			        <li><a href="{% url 'logout' %}">Log out</a></li>
 			      </ul>
 			  {% else %}
 		      <form class="form-inline navbar-right" method="POST" action="{% url 'send_login_email' %}">
