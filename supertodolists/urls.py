@@ -22,6 +22,7 @@ from lists.views import home_page
 
 urlpatterns = [
 	path('', home_page, name='home'),
-	path('lists/', include('lists.urls'))
+	path('lists/', include('lists.urls')),
+    path('accounts/', include('accounts.urls')),
     # path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

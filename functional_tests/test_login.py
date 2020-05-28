@@ -1,6 +1,7 @@
 from django.core import mail
 from selenium.webdriver.common.keys import Keys
 import re
+import time
 
 from .base import FunctionalTest
 
@@ -36,10 +37,14 @@ class LoginTest(FunctionalTest):
 			self.fail(f'Could not find url in email body:\n{email.body}')
 		url = url_search.group(0)
 		self.assertIn(self.live_server_url, url)
-
+		# self.tearDown()
+		# self.setUp(/TDD)
 		# she clicks it
 		self.browser.get(url)
-
+		# time.sleep(1)
+		# print(url)
+		# print(self.live_server_url)
+		# time.sleep(1)
 		# she is logged in!
 		self.wait_for(
 			lambda: self.browser.find_element_by_link_text('Log out')
