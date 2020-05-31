@@ -56,7 +56,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'axdber@gmail.com'
+EMAIL_HOST_USER = 'axdr3test@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
