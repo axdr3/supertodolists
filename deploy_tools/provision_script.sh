@@ -26,10 +26,10 @@ cat  ./deploy_tools/gunicorn-systemd.template.service \
 | sudo tee /etc/systemd/system/gunicorn-$1.service
 
 # run these if no error was found
-# sudo systemctl daemon-reload
+sudo systemctl daemon-reload
 # # sudo systemctl reload nginx
 # sudo systemctl enable gunicorn-$1
-# sudo systemctl restart gunicorn-$1
+sudo systemctl restart gunicorn-$1.service
 
 echo 'Provisioning Successfully Completed!'
 exit 0
