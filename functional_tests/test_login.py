@@ -65,8 +65,7 @@ class LoginTest(FunctionalTest):
 		inbox = poplib.POP3_SSL('pop.gmail.com', port=995)
 		try:
 			inbox.user(test_email)
-			print("User's Environment variable:")
-			pprint.pprint(dict(os.environ), width = 1)
+			print(os.environ.keys())
 			passw = os.environ.get('EMAIL_PASSWORD')
 			inbox.pass_(passw)
 			while time.time() - start < 60:
