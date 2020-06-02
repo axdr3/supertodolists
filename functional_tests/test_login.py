@@ -65,9 +65,9 @@ class LoginTest(FunctionalTest):
 		try:
 			print(test_email)
 			inbox.user(test_email)
-			print(os.environ.get('EMAIL_PASSWORD'))
-
-			inbox.pass_(os.environ.get('EMAIL_PASSWORD'))
+			passw = os.environ.get('EMAIL_PASSWORD')
+			print(passw)
+			inbox.pass_(passw)
 			while time.time() - start < 60:
 				# get 10 newest messages
 				count, _ = inbox.stat()
