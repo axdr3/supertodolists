@@ -4,6 +4,7 @@ import re
 import time
 import os
 import poplib
+import pprint
 
 from .base import FunctionalTest
 
@@ -61,12 +62,12 @@ class LoginTest(FunctionalTest):
 			return email.body
 		email_id = None
 		start = time.time()
-		inbox = poplib.POP3_SSL('pop.gmail.com')
+		inbox = poplib.POP3_SSL('pop.gmail.com', port=995)
 		try:
-			print(test_email)
 			inbox.user(test_email)
+			print("User's Environment variable:")
+			pprint.pprint(dict(os.environ), width = 1)
 			passw = os.environ.get('EMAIL_PASSWORD')
-			print(passw)
 			inbox.pass_(passw)
 			while time.time() - start < 60:
 				# get 10 newest messages
