@@ -54,7 +54,7 @@ def _get_latest_source():
 
 def _update_virtualenv():
     if not exists('virtualenv/bin/pip'):
-        run(f'python3.6 -m venv virtualenv')
+        run(f'python3.8 -m venv virtualenv')
     run('./virtualenv/bin/pip install -r requirements.txt')
 
 # _create_or_update_dotenv()
@@ -74,8 +74,8 @@ def _create_or_update_dotenv():
             'abcdefghijklmnopqrstuvwxyz0123456789', k=50
         ))
         append('.env', f'DJANGO_SECRET_KEY={new_secret}')
-        email_password = os.environ.get('EMAIL_PASSWORD')
-        append('.env', f'EMAIL_PASSWORD={email_password}')
+    email_password = os.environ.get('EMAIL_PASSWORD')
+    append('.env', f'EMAIL_PASSWORD={email_password}')
 
 # _update_static_files()
 # We use the virtualenv version of Python whenever we need to run a Django manage.py command,

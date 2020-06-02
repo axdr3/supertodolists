@@ -27,12 +27,14 @@ class LoginTest(FunctionalTest):
 		self.browser.find_element_by_name('email').send_keys(test_email)
 		self.browser.find_element_by_name('email').send_keys(Keys.ENTER)
 
+		time.sleep(2)
 		# A message appears telling her an email has been sent
 		self.wait_for(lambda: self.assertIn(
 			'Check your email',
 			self.browser.find_element_by_tag_name('body').text
 		))
 
+		time.sleep(2)
 		# She checks her email and finds a message
 		body = self.wait_for_email(test_email, SUBJECT)
 
