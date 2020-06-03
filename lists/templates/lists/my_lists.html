@@ -1,0 +1,17 @@
+{% extends 'lists/base.html' %}
+
+{% block header_text %}My Lists{% endblock %}
+
+{% block list_form %}{% endblock %}
+
+{% block extra_content %}
+<!-- We want a variable called owner to represent the user in our template. -->
+    <h2>{{ owner.email }}'s lists</h2>
+    <ul>
+    	<!-- We want to be able to iterate through the lists created by the user using owner.list_set.all -->
+        {% for list in owner.list_set.all %}
+        <!-- We want to use list.name to print out the "name" of the list, which is currently specified as the text of its first element. -->
+            <li><a href="{{ list.get_absolute_url }}">{{ list.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
