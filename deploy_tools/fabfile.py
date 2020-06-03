@@ -98,7 +98,7 @@ def _provide_server_config():
     print('\nWould you like to add config files for gunicorn and nginx? (y|n)')
     x = input()
     if x == 'y':
-    	state = run(f'sh ./deploy_tools/provision_script.sh {env.host} {env.user}')
-    	if state == 1:
-    		return 0
+        state = run(f'sh ./deploy_tools/provision_script.sh {env.host} {env.user}')
+        if state == 1:
+            return 0
     pass
