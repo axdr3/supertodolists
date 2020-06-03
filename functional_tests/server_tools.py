@@ -14,7 +14,6 @@ def reset_database(host):
 
 def _get_server_env_vars(host):
     env_lines = run(f'cat ~/sites/{host}/.env').splitlines()
-    print(env_lines)
     return dict(l.split('=') for l in env_lines if l)
 
 
