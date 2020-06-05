@@ -3,15 +3,16 @@ from django.test import TestCase
 from django.http import HttpRequest
 from django.utils.html import escape
 from django.template.loader import render_to_string
+from django.contrib.auth import get_user_model
+from unittest.mock import patch
 from ..models import Item, List
 from ..views import home_page
 from lists.forms import (
     DUPLICATE_ITEM_ERROR, EMPTY_ITEM_ERROR,
     ExistingListItemForm, ItemForm,
 )
-from unittest import skip
+# from unittest import skip
 import re
-from django.contrib.auth import get_user_model
 User = get_user_model()
 
 # Create your tests here.
@@ -190,14 +191,43 @@ class NewListTest(TestCase):
 		self.assertEqual(List.objects.count(), 0)
 		self.assertEqual(Item.objects.count(), 0)
 
-	def test_list_owner_is_saved_if_user_is_authenticated(self):
+	# @patch('lists.views.List')
+	# @patch('lists.views.redirect')
+	# def test_passes_POST_data_to_ExistingItemListForm(self,
+	# 	mockRedirect, mockListClass):
+	# 	user = User.objects.create(email='a@b.com')
+	# 	self.client.force_login(user)
+	# 	self.client.post('/lists/new', data={'text': 'new item'})
+
+	# We mock out the List class to be able to get access to any
+	# lists that might be created by the view.
+	@patch('lists.views.List')
+	# We also mock out the ItemForm. Otherwise, our form will raise
+	# an error when we call form.save(), because it can’t use a mock
+	# object as the foreign key for the Item it wants to create.
+	@patch('lists.views.ExistingListItemForm')
+	# @patch('lists.views.redirect')
+	def test_list_owner_is_saved_if_user_is_authenticated(self,
+		mockExistingListItemFormClass, mockListClass):
+
 		user = User.objects.create(email='a@b.com')
 		# force_login() is the way you get the test client to
 		# make requests with a logged-in user.
 		self.client.force_login(user)
+
+		mock_list = mockListClass.return_value
+		# We assign that check function as a side_effect to the thing we want to
+		# check happened second. When the view calls our mocked save function, it
+		# will go through this assertion. We make sure to set this up before we
+		# actually call the function we’re testing.
+		# check owner is assigned
+		mock_list.save.side_effect = lambda: self.assertEqual(mock_list.owner, user)
+
 		self.client.post('/lists/new', data={'text': 'new item'})
-		list_ = List.objects.first()
-		self.assertEqual(list_.owner, user)
+		# Finally, we make sure that the function with the side_effect was actually
+		# triggered—​that is, that we did .save(). Otherwise, our assertion may actually
+		# never have been run.
+		mock_list.save.assert_called_once_with()
 
 
 class MyListsTest(TestCase):

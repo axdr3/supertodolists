@@ -38,6 +38,7 @@ this time we’ll override the constructor on our new form class so that it know
 
 """
 
+# TODO:IMPROVE merge it with ItemForm?
 
 class ExistingListItemForm(ItemForm):
 

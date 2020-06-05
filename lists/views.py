@@ -41,8 +41,8 @@ def new_list(request):
 		list_.save()
 		form = ExistingListItemForm(for_list=list_, data=request.POST)
 		form.save()
-		# Item.objects.create(text=request.POST['text'], list=list_)
-		return redirect(list_)
+		# TODO:IMPROVE should it be like this?
+		return redirect(str(list_.get_absolute_url()))
 	else:
 		return render(request, 'lists/home.html', {"form": form})
 
