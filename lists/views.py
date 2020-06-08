@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
+from django.http import HttpRequest
 from .models import Item, List
-from lists.forms import ItemForm, ExistingListItemForm
+from lists.forms import ItemForm, ExistingListItemForm, NewListForm
 from django.contrib.auth import get_user_model
 User = get_user_model()
 # Create your views here.
@@ -33,11 +34,12 @@ def view_list(request, list_id):
 	)
 
 
-def new_list(request):
+def new_list2(request):
 	form = ItemForm(data=request.POST)
 	if form.is_valid():
 		list_ = List()
-		list_.owner = request.user
+		if request.user.is_authenticated:
+			list_.owner = request.user
 		list_.save()
 		form = ExistingListItemForm(for_list=list_, data=request.POST)
 		form.save()
@@ -45,6 +47,15 @@ def new_list(request):
 		return redirect(str(list_.get_absolute_url()))
 	else:
 		return render(request, 'lists/home.html', {"form": form})
+
+
+def new_list(request):
+	form = NewListForm(data=request.POST)
+	if form.is_valid():
+		list_ = form.save(owner=request.user)
+		return redirect(str(list_.get_absolute_url()))
+	return render(request, 'lists/home.html', {'form': form})
+
 
 
 def my_lists(request, email):

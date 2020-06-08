@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item
+from .models import Item, List
 from django.core.exceptions import ValidationError
 
 EMPTY_ITEM_ERROR = "You can't have an empty list item"
@@ -24,10 +24,8 @@ class ItemForm(forms.models.ModelForm):
 	# The .instance attribute on a form represents the database
 	# object that is being modified or created. There are other ways of getting this to work,
 	# including manually creating the object yourself, or using the commit=False argument to save,
-	# but this is the neatest I think. We’ll explore a different way of making a form "know" what
-	# list it’s for in the next chapter:
-	def save(self):
-		return forms.models.ModelForm.save(self)
+	# but this is the neatest I think.
+
 
 
 """
@@ -39,6 +37,7 @@ this time we’ll override the constructor on our new form class so that it know
 """
 
 # TODO:IMPROVE merge it with ItemForm?
+
 
 class ExistingListItemForm(ItemForm):
 
@@ -54,3 +53,12 @@ class ExistingListItemForm(ItemForm):
 		except ValidationError as e:
 			e.error_dict = {'text': [DUPLICATE_ITEM_ERROR]}
 			self._update_errors(e)
+
+
+class NewListForm(ItemForm):
+
+	def save(self, owner):
+		if owner.is_authenticated:
+			return List.create_new(first_item_text=self.cleaned_data['text'], owner=owner)
+		else:
+			return List.create_new(first_item_text=self.cleaned_data['text'])

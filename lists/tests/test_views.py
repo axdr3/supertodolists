@@ -4,14 +4,17 @@ from django.http import HttpRequest
 from django.utils.html import escape
 from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
-from unittest.mock import patch
+from django.contrib.auth.models import AnonymousUser
+from unittest.mock import patch, Mock
+from django.http import HttpRequest
+from lists.views import new_list
 from ..models import Item, List
 from ..views import home_page
 from lists.forms import (
     DUPLICATE_ITEM_ERROR, EMPTY_ITEM_ERROR,
-    ExistingListItemForm, ItemForm,
+    ExistingListItemForm, ItemForm, NewListForm
 )
-# from unittest import skip
+import unittest
 import re
 User = get_user_model()
 
@@ -153,7 +156,74 @@ class ListViewTest(TestCase):
 		self.assertEqual(Item.objects.all().count(), 1)
 
 
-class NewListTest(TestCase):
+@patch('lists.views.NewListForm')
+#  	The Django TestCase class makes it too easy to write integrated tests. As
+#  	a way of making sure we’re writing "pure", isolated unit tests, we’ll only
+#  	use unittest.TestCase.
+class NewListViewUnitTest(unittest.TestCase):
+	# We set up a basic POST request in setUp, building up the request by hand
+	# rather than using the (overly integrated) Django Test Client.
+	def setUp(self):
+		self.request = HttpRequest()
+		# self.request.user = AnonymousUser()
+		self.request.user = Mock()
+		self.request.POST['text'] = 'new list item'
+
+	def test_passes_POST_data_to_NewListForm(self, mockNewListForm):
+		new_list(self.request)
+		mockNewListForm.assert_called_once_with(data=self.request.POST)
+
+	def test_saves_form_with_owner_if_form_valid(self, mockNewListForm):
+		mock_form = mockNewListForm.return_value
+		mock_form.is_valid.return_value = True
+		new_list(self.request)
+		mock_form.save.assert_called_once_with(owner=self.request.user)
+
+	@patch('lists.views.redirect')
+	# patch decorators are applied innermost first, so the new mock is injected
+	# to our method before the mockNewListForm.
+	def test_redirects_to_form_returned_object_if_form_valid(
+		self, mock_redirect, mockNewListForm
+	):
+		mock_form = mockNewListForm.return_value
+		# We specify that we’re testing the case where the form is valid.
+		mock_form.is_valid.return_value = True
+
+		response = new_list(self.request)
+
+		# We check that the response from the view is the result of the
+		# redirect function.
+		self.assertEqual(response, mock_redirect.return_value)
+
+		# And we check that the redirect function was called with the object
+		# that the form returns on save.
+
+		# The form’s .save method should return a new list object, for our view
+		# to redirect the user to.
+		mock_form = mock_form.save.return_value
+		mock_redirect.assert_called_once_with(str(mock_form.get_absolute_url.return_value))
+
+	@patch('lists.views.render')
+	def test_renders_home_template_with_form_if_form_invalid(
+		self, mock_render, mockNewListForm):
+		mock_form = mockNewListForm.return_value
+		mock_form.is_valid.return_value = False
+
+		response = new_list(self.request)
+
+		self.assertEqual(response, mock_render.return_value)
+		mock_render.assert_called_once_with(
+			self.request, 'lists/home.html', {'form': mock_form}
+		)
+
+	def test_does_not_save_if_form_invalid(self, mockNewListForm):
+		mock_form = mockNewListForm.return_value
+		mock_form.is_valid.return_value = False
+		new_list(self.request)
+		self.assertFalse(mock_form.save.called)
+
+
+class NewListViewIntegratedTest(TestCase):
 	def test_saving_a_POST_request(self):
 		self.client.post(
 			'/lists/new',
@@ -163,15 +233,6 @@ class NewListTest(TestCase):
 		self.assertEqual(Item.objects.count(), 1)
 		new_item = Item.objects.first()
 		self.assertEqual(new_item.text, 'A new list item')
-
-	def test_redirects_after_POST(self):
-		response = self.client.post(
-			'/lists/new',
-			data={'text': 'A new list item'}
-		)
-		new_list = List.objects.first()
-		# redirect has status code 302
-		self.assertRedirects(response, '/lists/%d/' % (new_list.id,))
 
 	def test_for_invalid_input_renders_home_template(self):
 		response = self.client.post('/lists/new', data={'text': ''})
@@ -191,43 +252,12 @@ class NewListTest(TestCase):
 		self.assertEqual(List.objects.count(), 0)
 		self.assertEqual(Item.objects.count(), 0)
 
-	# @patch('lists.views.List')
-	# @patch('lists.views.redirect')
-	# def test_passes_POST_data_to_ExistingItemListForm(self,
-	# 	mockRedirect, mockListClass):
-	# 	user = User.objects.create(email='a@b.com')
-	# 	self.client.force_login(user)
-	# 	self.client.post('/lists/new', data={'text': 'new item'})
-
-	# We mock out the List class to be able to get access to any
-	# lists that might be created by the view.
-	@patch('lists.views.List')
-	# We also mock out the ItemForm. Otherwise, our form will raise
-	# an error when we call form.save(), because it can’t use a mock
-	# object as the foreign key for the Item it wants to create.
-	@patch('lists.views.ExistingListItemForm')
-	# @patch('lists.views.redirect')
-	def test_list_owner_is_saved_if_user_is_authenticated(self,
-		mockExistingListItemFormClass, mockListClass):
-
+	def test_list_owner_is_saved_if_user_is_authenticated(self):
 		user = User.objects.create(email='a@b.com')
-		# force_login() is the way you get the test client to
-		# make requests with a logged-in user.
 		self.client.force_login(user)
-
-		mock_list = mockListClass.return_value
-		# We assign that check function as a side_effect to the thing we want to
-		# check happened second. When the view calls our mocked save function, it
-		# will go through this assertion. We make sure to set this up before we
-		# actually call the function we’re testing.
-		# check owner is assigned
-		mock_list.save.side_effect = lambda: self.assertEqual(mock_list.owner, user)
-
 		self.client.post('/lists/new', data={'text': 'new item'})
-		# Finally, we make sure that the function with the side_effect was actually
-		# triggered—​that is, that we did .save(). Otherwise, our assertion may actually
-		# never have been run.
-		mock_list.save.assert_called_once_with()
+		list_ = List.objects.first()
+		self.assertEqual(list_.owner, user)
 
 
 class MyListsTest(TestCase):
