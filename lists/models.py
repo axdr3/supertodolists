@@ -8,6 +8,14 @@ class List(models.Model):
 
 	owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
 		on_delete=models.CASCADE)
+<<<<<<< HEAD
+=======
+	#  the @property decorator transforms a method on a class to make it appear to the outside
+	# world like an attribute.
+	@property
+	def name(self):
+		return self.item_set.first().text
+>>>>>>> 2713d1dec2846f734cf206da6bd6aada93331cf2
 
 	def get_absolute_url(self):
 		return reverse('view_list', args=[self.id])
