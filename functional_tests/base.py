@@ -2,9 +2,12 @@ from selenium import webdriver
 from .server_tools import reset_database
 from selenium.webdriver.common.keys import Keys
 # from django.test import LiveServerTestCase
+from django.conf import settings
 from selenium.common.exceptions import WebDriverException
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 # from unittest import skip
+from .server_tools import create_session_on_server
+from .management.commands.create_session import create_pre_authenticated_session
 from datetime import datetime
 import time
 import os
@@ -35,6 +38,25 @@ class FunctionalTest(StaticLiveServerTestCase):
 				self.dump_html()
 		self.browser.quit()
 		super().tearDown()
+
+	def create_pre_authenticated_session(self, email):
+		if self.staging_server:
+		    print('Im in')
+		    session_key = create_session_on_server(self.staging_server, email)
+		else:
+		    print('Im out')
+		    session_key = create_pre_authenticated_session(email)
+		## to set a cookie we need to first visit the domain.
+		## 404 pages load the quickest!
+		self.browser.get(self.live_server_url + "/404_no_such_url/")
+		# We then add a cookie to the browser that matches the session on the
+		# server—​on our next visit to the site, the server should recognise
+		# us as a logged-in user.
+		self.browser.add_cookie(dict(
+		    name=settings.SESSION_COOKIE_NAME,
+		    value=session_key,
+		    path='/',
+		))
 
 	def _test_has_failed(self):
 		# slightly obscure but couldn't find a better way!
