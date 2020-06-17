@@ -4,6 +4,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from .base import FunctionalTest
 from .server_tools import create_session_on_server
 from .management.commands.create_session import create_pre_authenticated_session
+from .list_page import ListPage
 User = get_user_model()
 
 
@@ -16,8 +17,9 @@ class MyListsTest(FunctionalTest):
 
         # She goes to the home page and starts a list
         self.browser.get(self.live_server_url)
-        self.add_list_item('Reticulate splines')
-        self.add_list_item('Immanentize eschaton')
+        page = ListPage(self).add_list_item('Reticulate splines')
+
+        page.add_list_item('Immanentize eschaton')
         first_list_url = self.browser.current_url
 
         # She notices a "My lists" link, for the first time.
@@ -34,7 +36,7 @@ class MyListsTest(FunctionalTest):
         )
         # She decides to start another list, just to see
         self.browser.get(self.live_server_url)
-        self.add_list_item('Click cows')
+        page.add_list_item('Click cows')
         second_list_url = self.browser.current_url
 
         # Under "my lists", her new list appears

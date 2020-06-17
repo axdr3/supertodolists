@@ -2,6 +2,7 @@
 from selenium.webdriver.common.keys import Keys
 from .base import FunctionalTest
 from lists.tests.test_forms import DUPLICATE_ITEM_ERROR
+from .list_page import ListPage
 import time
 
 
@@ -53,9 +54,11 @@ class ItemValidationTest(FunctionalTest):
 	def test_cannot_add_duplicate_items(self):
 
 		self.browser.get(self.live_server_url)
-		self.add_list_item('Buy milk')
+		ListPage(self).add_list_item('Buy milk')
+		# self.add_list_item('Buy milk')
 
 		# Try adding same item
+		# ListPage(self).add_list_item('Buy milk')
 
 		self.get_item_input_box().send_keys('Buy milk')
 		self.get_item_input_box().send_keys(Keys.ENTER)
@@ -79,7 +82,8 @@ class ItemValidationTest(FunctionalTest):
 	def test_error_messages_are_cleared_on_input(self):
 		# Edith starts a list and causes a validation error:
 		self.browser.get(self.live_server_url)
-		self.add_list_item('Banter too thick')
+		# self.add_list_item('Banter too thick')
+		ListPage(self).add_list_item('Banter too thick')
 
 		self.get_item_input_box().send_keys('Banter too thick')
 		self.get_item_input_box().send_keys(Keys.ENTER)

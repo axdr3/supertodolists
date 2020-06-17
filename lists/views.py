@@ -57,7 +57,12 @@ def new_list(request):
 	return render(request, 'lists/home.html', {'form': form})
 
 
-
 def my_lists(request, email):
 	owner = User.objects.get(email=email)
 	return render(request, 'lists/my_lists.html', {'owner': owner})
+
+
+def share_list(request, list_id):
+	if request.method == 'POST':
+		lista = List.objects.all().get(id=list_id)
+		return redirect(str(lista.get_absolute_url()))

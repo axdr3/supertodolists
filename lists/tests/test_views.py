@@ -7,9 +7,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from unittest.mock import patch, Mock
 from django.http import HttpRequest
-from lists.views import new_list
+from lists.views import (
+	new_list, home_page, share_list
+	)
 from ..models import Item, List
-from ..views import home_page
 from lists.forms import (
     DUPLICATE_ITEM_ERROR, EMPTY_ITEM_ERROR,
     ExistingListItemForm, ItemForm, NewListForm
@@ -272,3 +273,28 @@ class MyListsTest(TestCase):
 		correct_user = User.objects.create(email='a@b.com')
 		response = self.client.get('/lists/users/a@b.com/')
 		self.assertEqual(response.context['owner'], correct_user)
+
+
+class ShareListTest(TestCase):
+
+	def test_post_redirects_to_lists_page(self):
+		lista = List.objects.create(item='Oie')
+
+		# response
+		response = self.client.post(
+			f'/lists/{lista.id}/share',
+			data={'text': 'oni@example.com'}
+		)
+		# list_id = List.objects.first().id
+		self.assertRedirects(response, f'/lists/{lista.id}/')
+
+	def test_post_with_email_and_check_user_is_added_shared_lists(self):
+		lista = List.objects.create(item='Oie')
+		user = User.objects.create(email='oni@example.com')
+
+		self.client.post(
+			f'/lists/{lista.id}/share',
+			data={'text': 'oni@example.com'}
+		)
+
+		self.assertIn(user, lista.shared_with.all())

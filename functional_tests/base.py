@@ -83,12 +83,12 @@ class FunctionalTest(StaticLiveServerTestCase):
 			timestamp=timestamp
 		)
 
-	def add_list_item(self, item_text):
-		num_rows = len(self.browser.find_elements_by_css_selector('#id_list_table tr'))
-		self.get_item_input_box().send_keys(item_text)
-		self.get_item_input_box().send_keys(Keys.ENTER)
-		item_number = num_rows + 1
-		self.wait_for_row_in_list_table(f'{item_number}: {item_text}')
+	# def add_list_item(self, item_text):
+	# 	num_rows = len(self.browser.find_elements_by_css_selector('#id_list_table tr'))
+	# 	self.get_item_input_box().send_keys(item_text)
+	# 	self.get_item_input_box().send_keys(Keys.ENTER)
+	# 	item_number = num_rows + 1
+	# 	self.wait_for_row_in_list_table(f'{item_number}: {item_text}')
 
 	# A decorator is a way of modifying a function; it takes a function as an argument…​
 	def wait(fn):
