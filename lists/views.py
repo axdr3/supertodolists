@@ -64,5 +64,5 @@ def my_lists(request, email):
 
 def share_list(request, list_id):
 	if request.method == 'POST':
-		lista = List.objects.all().get(id=list_id)
+		lista = List.objects.get(id=list_id)
 		return redirect(str(lista.get_absolute_url()))
