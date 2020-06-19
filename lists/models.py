@@ -1,25 +1,41 @@
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 # Create your models here.
 
 
 class List(models.Model):
+	pass
 
-	owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
+	owner = models.ForeignKey(User, blank=True, null=True,
 		on_delete=models.CASCADE)
 
+	shared_with = models.ManyToManyField(User,
+		related_name='sharees')
 	#  the @property decorator transforms a method on a class to make it appear to the outside
 	# world like an attribute.
 
 	def get_absolute_url(self):
 		return reverse('view_list', args=[self.id])
 
+	def share(self, user):
+		if type(user) is not settings.AUTH_USER_MODEL:
+			return
+
+		if self.shared_with:
+			self.shared_with.add(user)
+		else:
+			self.shared_with.create(user)
+
 	@staticmethod
 	def create_new(first_item_text, owner=None):
 		list_ = List.objects.create(owner=owner)
 		Item.objects.create(text=first_item_text, list=list_)
 		return list_
+
 
 	@property
 	def name(self):

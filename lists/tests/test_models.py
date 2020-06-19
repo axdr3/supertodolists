@@ -99,10 +99,12 @@ class ListModelTest(TestCase):
 		Item.objects.create(list=list_, text='second item')
 		self.assertEqual(list_.name, 'first item')
 
-	def test_check_list_has_shared_with_attr(self):
+	def test_list_has_shared_with_attr(self):
 		user = User.objects.create(email='a@b.com')
 		user2 = User.objects.create(email='c@d.com')
 		lista = List.create_new(first_item_text='oie', owner=user)
-		lista.shared_with.add(user2)
-
+		lista.share(user=user2)
+		print(lista._meta.fields)
+		# lista.save(force_update=True)
+		print(user.sharees.all())
 		self.assertIn(user2, lista.shared_with.all())
