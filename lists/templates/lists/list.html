@@ -6,6 +6,14 @@
 	{% url 'view_list' list.id %}
 {% endblock %}
 {% block table %}
+
+	<table id="id_list_table" class="table bg-light">
+		{% for item in list.item_set.all %}
+			<tr><td>{{ forloop.counter }}: {{item.text}}</td></tr>
+		{% endfor %}
+	</table>
+{% endblock table %}
+
 	<!-- form to share a list -->
 	<p> Share this list with:</p>
 	<form method="POST" action="">
@@ -13,9 +21,3 @@
 		<input type="text" name="sharee" placeholder="your-friend@example.com">
 	</form>
 	
-	<table id="id_list_table" class="table bg-light">
-		{% for item in list.item_set.all %}
-			<tr><td>{{ forloop.counter }}: {{item.text}}</td></tr>
-		{% endfor %}
-	</table>
-{% endblock table %}

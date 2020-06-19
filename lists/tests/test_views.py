@@ -283,7 +283,7 @@ class ShareListTest(TestCase):
 		# response
 		response = self.client.post(
 			f'/lists/{lista.id}/share',
-			data={'text': 'oni@example.com'}
+			data={'sharee': 'oni@example.com'}
 		)
 		# list_id = List.objects.first().id
 		self.assertRedirects(response, f'/lists/{lista.id}/')
@@ -294,7 +294,7 @@ class ShareListTest(TestCase):
 
 		self.client.post(
 			f'/lists/{lista.id}/share',
-			data={'text': 'duo@example.com'}
+			data={'sharee': 'duo@example.com'}
 		)
 
 		self.assertIn(user, lista.shared_with.all())
