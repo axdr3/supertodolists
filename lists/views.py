@@ -64,5 +64,12 @@ def my_lists(request, email):
 
 def share_list(request, list_id):
 	if request.method == 'POST':
+		email = request.POST.get('sharee')
 		lista = List.objects.get(id=list_id)
+		try:
+			user = User.objects.all().get(email=email)
+			lista.shared_with.add(user)
+		except User.DoesNotExist:
+			print(f'User: {user} does not exist.')
+			pass
 		return redirect(str(lista.get_absolute_url()))
