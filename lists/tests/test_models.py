@@ -107,12 +107,14 @@ class ListModelTest(TestCase):
 		# print(lista._meta.fields)
 		print(f'Sharees: {lista.shared_with.all()}')
 		self.assertIn(user2, lista.shared_with.all())
-	
+
 	def test_list_cannot_add_own_user_to_shared_with_attr(self):
 		user = User.objects.create(email='a@b.com')
 		# user2 = User.objects.create(email='c@d.com')
 		lista = List.create_new(first_item_text='oie', owner=user)
+		print('Pre-add')
 		lista.shared_with.add(user)
+		print('Post-add')
 		# print(lista._meta.fields)
 		print(f'Sharees: {lista.shared_with.all()}')
 		self.assertNotIn(user, lista.shared_with.all())
