@@ -41,10 +41,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
 	def create_pre_authenticated_session(self, email):
 		if self.staging_server:
-		    print('Im in')
 		    session_key = create_session_on_server(self.staging_server, email)
 		else:
-		    print('Im out')
 		    session_key = create_pre_authenticated_session(email)
 		## to set a cookie we need to first visit the domain.
 		## 404 pages load the quickest!

@@ -70,6 +70,6 @@ def share_list(request, list_id):
 			user = User.objects.all().get(email=email)
 			lista.shared_with.add(user)
 		except User.DoesNotExist:
-			print(f'User: {user} does not exist.')
+			print(f'User does not exist.')
 			pass
 		return redirect(str(lista.get_absolute_url()))

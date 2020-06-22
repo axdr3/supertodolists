@@ -15,3 +15,12 @@
         {% endfor %}
     </ul>
 {% endblock %}
+
+{% block sharing %}
+	alo
+	{% for shared_with.email in owner.sharees.all %}
+		<ul>
+			<li class="list-sharee">Sharee: {{shared_with.email}}</li>
+		</ul>
+	{% endfor %}
+{% endblock sharing %}
