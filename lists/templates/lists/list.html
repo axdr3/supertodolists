@@ -1,6 +1,10 @@
 {% extends 'lists/base.html' %}
 {% block header_text %}
-	Your To-Do list
+	{% if list.owner != user.email %}
+	    <span id="id_list_owner">{{list.owner.email}}'s To-Do list</span>
+	{% elif not list.owner or list.owner == user.email %}
+		Your To-Do list
+	{% endif %}
 {% endblock header_text %}
 {% block form_action %}
 	{% url 'view_list' list.id %}

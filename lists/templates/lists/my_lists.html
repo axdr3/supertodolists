@@ -17,10 +17,11 @@
 {% endblock %}
 
 {% block sharing %}
-	alo
-	{% for shared_with.email in owner.sharees.all %}
+	sharing
+	{% for shared_list in owner.sharees.all %}
+	<h3>{{shared_list.owner.email}}</h3>
 		<ul>
-			<li class="list-sharee">Sharee: {{shared_with.email}}</li>
+			<li class="list-sharee"><a href="{% url 'view_list' shared_list.id %}">{{shared_list.name}}</a></li>
 		</ul>
 	{% endfor %}
 {% endblock sharing %}
