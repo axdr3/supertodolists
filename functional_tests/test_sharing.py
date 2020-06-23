@@ -4,6 +4,7 @@ from .list_page import ListPage
 from .my_lists_page import MyListsPage
 import time
 
+
 def quit_if_possible(browser):
     try:
         browser.quit()
@@ -19,7 +20,6 @@ class SharingTest(FunctionalTest):
         edith_browser = self.browser
         self.addCleanup(lambda: quit_if_possible(edith_browser))
 
-       
         # Edith goes to the home page and starts a list
         self.browser = edith_browser
         self.browser.get(self.live_server_url)
