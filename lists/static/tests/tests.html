@@ -9,18 +9,36 @@
 <body>
   <div id="qunit"></div>
   <div id="qunit-fixture">
-   <form>
-    <input name="text" />
-    <div class="show-errors">Error text</div>
+   <form id="id_item_form">
+    <input type="" name="text">
+    <input type="hidden" name="csrfmiddlewaretoken" value="tokey" />
+    <div class="show-errors">
+      <div class="help-block">
+        Error text
+      </div>
+    </div>
   </form>
+  <table id="id_list_table">  
+  </table>
   </div>
   <script src="../jquery/jquery-3.5.1.min.js"></script>
   <script src="../list.js"></script>
   <script src="qunit-2.10.0.js"></script>
+  <script src="sinon-9.0.2.js"></script>
 
 </body>
 
 <script>
+var server, sandbox;
+QUnit.testStart(function () {
+  server = sinon.fakeServer.create();  
+  sandbox = sinon.createSandbox();
+});
+QUnit.testDone(function () {
+  server.restore();  
+  sandbox.restore();
+});
+
 QUnit.test("errors should be hidden on keypress", function (assert) {
 	window.Supertodolists.initialize()
 	$('input[name="text"]').trigger('keypress');
@@ -32,6 +50,55 @@ QUnit.test("errors aren't hidden if there is no keypress", function (assert) {
  	assert.equal($('.show-errors').is(':visible'), true);
 });
 
-console.warn('alo');
+
+QUnit.test("should get items by ajax on initialize", function (assert) {
+  var url = '/getitems/';
+  window.Supertodolists.initialize(url);
+
+  assert.equal(server.requests.length, 1); 
+  var request = server.requests[0];
+  assert.equal(request.url, url);
+  assert.equal(request.method, 'GET');
+});
+
+QUnit.test("should fill in lists table from ajax response", function (assert) {
+  var url = '/getitems/';
+  var responseData = [
+    {'id': 101, 'text': 'item 1 text'},
+    {'id': 102, 'text': 'item 2 text'},
+  ];
+  server.respondWith('GET', url, [
+    200, {"Content-Type": "application/json"}, JSON.stringify(responseData) 
+  ]);
+  window.Supertodolists.initialize(url); 
+
+  server.respond(); 
+
+  var rows = $('#id_list_table tr');  
+  assert.equal(rows.length, 2);
+  var row1 = $('#id_list_table tr:first-child td');
+  assert.equal(row1.text(), '1: item 1 text');
+  var row2 = $('#id_list_table tr:last-child td');
+  assert.equal(row2.text(), '2: item 2 text');
+});
+
+QUnit.test("should intercept form submit and do ajax post", function (assert) {
+  var url = '/listitemsapi/';
+  window.Supertodolists.initialize(url);
+
+  $('#id_item_form input[name="text"]').val('user input');  
+  $('#id_item_form input[name="csrfmiddlewaretoken"]').val('tokeney');  
+  $('#id_item_form').submit();  
+
+  assert.equal(server.requests.length, 2);  
+  var request = server.requests[1];
+  assert.equal(request.url, url);
+  assert.equal(request.method, "POST");
+  assert.equal(
+    request.requestBody,
+    'text=user+input&csrfmiddlewaretoken=tokeney'  
+  );
+});
+
 </script>
 </html>

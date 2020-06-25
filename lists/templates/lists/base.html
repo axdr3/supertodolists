@@ -49,7 +49,7 @@
 
 					{% endblock header_text %}</h1>
 					{% block list_form %}
-					<form method="POST" action="{% block form_action %}{% endblock %}">
+					<form id="id_item_form" method="POST" action="{% block form_action %}{% endblock %}">
 						{{ form.text }}
 						{% csrf_token %}
 						{% if form.errors %}
@@ -89,11 +89,15 @@
 	<script type="text/javascript" src="{% static 'lists/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'list.js'%}"></script>
 
-    <script>
+
+    {% block scripts %}
+      <script>
 		$(document).ready(function () {
-		  window.Supertodolists.initialize();
+			window.Supertodolists.initialize();
 		});
-	</script>
+      </script>
+    {% endblock scripts %}
+
 
 </body>
 </html>

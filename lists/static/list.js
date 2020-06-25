@@ -16,11 +16,37 @@
 // giving it a name that we think no one else is likely to use.
 
 window.Supertodolists = {};
-window.Supertodolists.initialize = function(){
+
+window.Supertodolists.updateItems = function (url) {
+  $.get(url).done(function (response) {
+  	console.log('bef')
+    var rows = '';
+    for (var i=0; i<response.length; i++) {
+      var item = response[i];
+      rows += '\n<tr><td>' + (i+1) + ': ' + item.text + '</td></tr>';
+    }
+    $('#id_list_table').html(rows);
+    console.log('rows' + rows)
+  });
+};
+
+window.Supertodolists.initialize = function(url){
 	// console.log('AAAA')
 	// debugger;
-	$('input[name="text"]').val('')
+	$('input[name="text"]').val('');
 	$('input[name="text"]').on('keypress', function () {
 	  $('.show-errors').hide();
 	});
+
+	if (url) {
+		window.Supertodolists.updateItems(url);
+	    var form = $('#id_item_form');
+		form.on('submit', function(event) {
+		    event.preventDefault();
+		    $.post(url, {
+				'text': form.find('input[name="text"]').val(),
+			    'csrfmiddlewaretoken': form.find('input[name="csrfmiddlewaretoken"]').val(),
+			});
+		});
+	}
 };
