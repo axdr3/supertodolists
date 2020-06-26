@@ -54,16 +54,14 @@ class ItemValidationTest(FunctionalTest):
 	def test_cannot_add_duplicate_items(self):
 
 		self.browser.get(self.live_server_url)
-		ListPage(self).add_list_item('Buy milk')
+		list_page = ListPage(self).add_list_item('Buy milk')
 		# self.add_list_item('Buy milk')
 
 		# Try adding same item
 		# ListPage(self).add_list_item('Buy milk')
-
+		# list_page.add_list_item('Buy milk')
 		self.get_item_input_box().send_keys('Buy milk')
 		self.get_item_input_box().send_keys(Keys.ENTER)
-
-		time.sleep(0.5)
 
 		self.wait_for(lambda: self.assertEqual(
 			self.get_error_element().text,
@@ -72,7 +70,7 @@ class ItemValidationTest(FunctionalTest):
 
 		# Add different item
 
-		# self.get_item_input_box().clear()
+		self.get_item_input_box().clear()
 		self.get_item_input_box().send_keys('Buy dope')
 		self.get_item_input_box().send_keys(Keys.ENTER)
 		# Verify it hasn't accepted same item

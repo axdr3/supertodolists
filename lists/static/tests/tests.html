@@ -14,7 +14,7 @@
     <input type="hidden" name="csrfmiddlewaretoken" value="tokey" />
     <div class="show-errors">
       <div class="help-block">
-        Error text
+        <!-- Error text -->
       </div>
     </div>
   </form>
@@ -51,17 +51,26 @@ QUnit.test("errors aren't hidden if there is no keypress", function (assert) {
 });
 
 
-QUnit.test("should get items by ajax on initialize", function (assert) {
+QUnit.test("updateItems should get correct url by ajax", function (assert) {
   var url = '/getitems/';
+  sandbox.spy(window.Supertodolists, 'updateItems');
   window.Supertodolists.initialize(url);
+  assert.equal(
+    window.Supertodolists.updateItems.args,
+    url 
+  )
+});
+
+QUnit.test("updateItems should get correct url by ajax", function (assert) {
+  var url = '/getitems/';
+  window.Supertodolists.updateItems(url);
 
   assert.equal(server.requests.length, 1); 
   var request = server.requests[0];
   assert.equal(request.url, url);
   assert.equal(request.method, 'GET');
 });
-
-QUnit.test("should fill in lists table from ajax response", function (assert) {
+QUnit.test("updateItems should fill in lists table from ajax response", function (assert) {
   var url = '/getitems/';
   var responseData = [
     {'id': 101, 'text': 'item 1 text'},
@@ -70,7 +79,7 @@ QUnit.test("should fill in lists table from ajax response", function (assert) {
   server.respondWith('GET', url, [
     200, {"Content-Type": "application/json"}, JSON.stringify(responseData) 
   ]);
-  window.Supertodolists.initialize(url); 
+  window.Supertodolists.updateItems(url); 
 
   server.respond(); 
 
@@ -119,6 +128,61 @@ QUnit.test("should call updateItems after successful post", function (assert) {
   assert.equal(
     window.Supertodolists.updateItems.args,  
     url
+  );
+});
+
+QUnit.test("should display errors on post failure", function (assert) {
+  var url = '/listitemsapi/';
+  window.Supertodolists.initialize(url);
+  server.respondWith('POST', url, [
+    400,
+    {"Content-Type": "application/json"},
+    JSON.stringify({'error': 'something is amiss'})
+  ]);
+  $('.show-errors').hide();
+
+  $('#id_item_form').submit();
+  server.respond(); // post
+  assert.equal($('.help-block').is(':visible'), true);
+  assert.equal($('.help-block').text(), 'something is amiss');
+});
+
+QUnit.test("should hide errors on post success", function (assert) {
+  var url = '/listitemsapi/';
+  window.Supertodolists.initialize(url);
+  var response = [
+    201,
+    {"Content-Type": "application/json"},
+    JSON.stringify({}),
+  ];
+  server.respondWith(response);
+  $('.show-errors').show();
+
+  $('#id_item_form').submit();
+  server.respond(); // post
+
+  assert.equal($('.show-errors').is(':visible'), false);
+});
+
+
+QUnit.test("should display generic error if no error json", function (assert) {
+  var url = '/listitemsapi/';
+  window.Supertodolists.initialize(url);
+  server.respondWith('POST', url, [
+    502,
+    {},
+    ''
+  ]);
+  $('.show-errors help-block').text('old error');
+  $('.show-errors').hide();
+
+  $('#id_item_form').submit();
+  server.respond(); // post
+
+  assert.equal($('.show-errors').is(':visible'), true);
+  assert.equal(
+    $('.show-errors .help-block').text(),
+    'Error talking to server. Please try again.'
   );
 });
 

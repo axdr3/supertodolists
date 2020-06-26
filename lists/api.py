@@ -1,13 +1,22 @@
 from django.http import HttpResponse
-from lists.models import List, Item
+from lists.models import List
+from .forms import ExistingListItemForm
 import json
 
 
 def list(request, list_id):
     list_ = List.objects.get(id=list_id)
     if request.method == 'POST':
-        Item.objects.create(list=list_, text=request.POST['text'])
-        return HttpResponse(status=201)
+        form = ExistingListItemForm(for_list=list_, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(status=201)
+        else:
+            return HttpResponse(
+                json.dumps({'error': form.errors['text'][0]}),
+                content_type='application/json',
+                status=400
+            )
     item_dicts = [
         {'id': item.id, 'text': item.text}
         for item in list_.item_set.all()

@@ -18,6 +18,7 @@
 window.Supertodolists = {};
 
 window.Supertodolists.updateItems = function (url) {
+	
   $.get(url).done(function (response) {
   	console.log('bef')
     var rows = '';
@@ -31,9 +32,7 @@ window.Supertodolists.updateItems = function (url) {
 };
 
 window.Supertodolists.initialize = function(url){
-	// console.log('AAAA')
-	// debugger;
-	$('input[name="text"]').val('');
+
 	$('input[name="text"]').on('keypress', function () {
 	  $('.show-errors').hide();
 	});
@@ -46,8 +45,19 @@ window.Supertodolists.initialize = function(url){
 		    $.post(url, {
 				'text': form.find('input[name="text"]').val(),
 			    'csrfmiddlewaretoken': form.find('input[name="csrfmiddlewaretoken"]').val(),
+			    // 'error': form.find('error')
 			}).done(function() {
+				$('.show-errors').hide();
+
 				window.Supertodolists.updateItems(url);
+			})
+			.fail((xhr) => {
+				$('.show-errors').show();
+		        if (xhr.responseJSON && xhr.responseJSON.error) {
+		          $('.show-errors .help-block').text(xhr.responseJSON.error);
+		        } else {
+		          $('.show-errors .help-block').text('Error talking to server. Please try again.');
+		        }
 			});
 		});
 	}
