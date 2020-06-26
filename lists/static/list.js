@@ -20,10 +20,10 @@ window.Supertodolists = {};
 window.Supertodolists.updateItems = function (url) {
 	
   $.get(url).done(function (response) {
-  	console.log('bef')
+    if (!response.items) {return;}
     var rows = '';
-    for (var i=0; i<response.length; i++) {
-      var item = response[i];
+    for (var i=0; i<response.items.length; i++) {
+      var item = response.items[i];
       rows += '\n<tr><td>' + (i+1) + ': ' + item.text + '</td></tr>';
     }
     $('#id_list_table').html(rows);
@@ -31,25 +31,26 @@ window.Supertodolists.updateItems = function (url) {
   });
 };
 
-window.Supertodolists.initialize = function(url){
+window.Supertodolists.initialize = function(params){
 
 	$('input[name="text"]').on('keypress', function () {
 	  $('.show-errors').hide();
 	});
 
-	if (url) {
-		window.Supertodolists.updateItems(url);
+	if (params) {
+		window.Supertodolists.updateItems(params.listApiUrl);
 	    var form = $('#id_item_form');
 		form.on('submit', function(event) {
 		    event.preventDefault();
-		    $.post(url, {
+		    $.post(params.itemsApiUrl, {
+		    	'list': params.listId,
 				'text': form.find('input[name="text"]').val(),
 			    'csrfmiddlewaretoken': form.find('input[name="csrfmiddlewaretoken"]').val(),
 			    // 'error': form.find('error')
 			}).done(function() {
 				$('.show-errors').hide();
 
-				window.Supertodolists.updateItems(url);
+				window.Supertodolists.updateItems(params.listApiUrl);
 			})
 			.fail((xhr) => {
 				$('.show-errors').show();

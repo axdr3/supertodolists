@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'accounts',
     'lists',
     'functional_tests',
-    'behave_django'
+    'behave_django',
+    'rest_framework'
 ]
 
 AUTHENTICATION_BACKENDS = [

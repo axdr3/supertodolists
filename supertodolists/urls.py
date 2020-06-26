@@ -18,12 +18,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include, re_path
 from lists.views import home_page
-from lists import api_urls
+# from lists import api_urls
+from lists.api import router
 
 urlpatterns = [
 	path('', home_page, name='home'),
 	path('lists/', include('lists.urls')),
     path('accounts/', include('accounts.urls')),
-    path('api/', include(api_urls)),
+    # path('api/', include(api_urls)),
+    path('api/', include(router.urls)),
     # path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

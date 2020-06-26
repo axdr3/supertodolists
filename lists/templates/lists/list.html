@@ -38,9 +38,16 @@
 
 {% block scripts %}
   <script>
-	$(document).ready(function () {
-	  var url = "{% url 'api_list' list.id %}";
-	  window.Supertodolists.initialize(url);
-	});
+$(document).ready(function () {
+		params = 
+		{
+	  	    listApiUrl: "{% url 'list-detail' list.id %}",
+    		itemsApiUrl: "{% url 'item-list' %}",
+    		listId: {{ list.id }}
+      	};
+
+		window.Supertodolists.initialize(params);
+});
+
   </script>
 {% endblock scripts %}
