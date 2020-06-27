@@ -2,3 +2,5 @@ django==3.0.7
 gunicorn==20.0.4
 selenium==3.141.0
 fabric3
+behave
+behave-django
