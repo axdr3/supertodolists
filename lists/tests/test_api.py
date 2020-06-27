@@ -30,10 +30,6 @@ class ListAPITest(TestCase):
 			}
 		)
 
-	
-
-	
-
 
 class ItemsAPITest(TestCase):
 	base_url = reverse('item-list')
