@@ -54,8 +54,8 @@ window.Supertodolists.initialize = function(params){
 			})
 			.fail((xhr) => {
 				$('.show-errors').show();
-		        if (xhr.responseJSON && xhr.responseJSON.error) {
-		          $('.show-errors .help-block').text(xhr.responseJSON.error);
+		        if (xhr.responseJSON) {
+		          $('.show-errors .help-block').text(xhr.responseJSON.error || xhr.responseJSON.non_field_errors);
 		        } else {
 		          $('.show-errors .help-block').text('Error talking to server. Please try again.');
 		        }

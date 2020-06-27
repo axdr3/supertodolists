@@ -9,7 +9,7 @@ from rest_framework import routers, serializers, viewsets
 from rest_framework.validators import UniqueTogetherValidator
 
 
-# They are DRF’s way of converting from Django database models to JSON
+# Serializers are DRF’s way of converting from Django database models to JSON
 # (or possibly other formats) that you can send over the wire:
 class ItemSerializer(serializers.ModelSerializer):
 
