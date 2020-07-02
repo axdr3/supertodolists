@@ -5,3 +5,5 @@ fabric3
 behave
 behave-django
 djangorestframework
+postgresql
+psycopg2

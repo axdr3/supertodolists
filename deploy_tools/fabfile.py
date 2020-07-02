@@ -76,6 +76,8 @@ def _create_or_update_dotenv():
         append('.env', f'DJANGO_SECRET_KEY={new_secret}')
     email_password = os.environ.get('EMAIL_PASSWORD')
     append('.env', f'EMAIL_PASSWORD={email_password}')
+    db_pass = os.environ.get('DB_PASS')
+    append('.env', f'DB_PASS={db_pass}')
 
 # _update_static_files()
 # We use the virtualenv version of Python whenever we need to run a Django manage.py command,
