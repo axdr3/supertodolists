@@ -66,6 +66,8 @@ def _update_virtualenv():
 
 
 def _create_or_update_dotenv():
+
+    run('rm -r .env')
     append('.env', 'DJANGO_DEBUG_FALSE=y')
     append('.env', f'SITENAME={env.host}')
     current_contents = run('cat .env')
@@ -93,6 +95,7 @@ def _update_static_files():
 
 
 def _update_database():
+    run('./virtualenv/bin/python manage.py makemigrations --noinput')
     run('./virtualenv/bin/python manage.py migrate --noinput')
 
 

@@ -127,7 +127,7 @@ DATABASES = {
         'USER': 'xad',
         'PASSWORD': os.environ.get('DB_PASS'),
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
