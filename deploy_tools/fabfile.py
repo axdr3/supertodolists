@@ -80,6 +80,8 @@ def _create_or_update_dotenv():
     append('.env', f'EMAIL_PASSWORD={email_password}')
     db_pass = os.environ.get('DB_PASS')
     append('.env', f'DB_PASS={db_pass}')
+    # run(f'echo {db_pass}')
+    run(f"export DB_PASS='{db_pass}'")
 
 # _update_static_files()
 # We use the virtualenv version of Python whenever we need to run a Django manage.py command,
@@ -95,7 +97,7 @@ def _update_static_files():
 
 
 def _update_database():
-    run('./virtualenv/bin/python manage.py makemigrations --noinput')
+    run('./virtualenv/bin/python manage.py makemigrations')
     run('./virtualenv/bin/python manage.py migrate --noinput')
 
 

@@ -126,7 +126,7 @@ DATABASES = {
         'NAME': 'supertodolistsDB',
         'USER': 'xad',
         'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST': 'localhost',
+        'HOST': ALLOWED_HOSTS,
         'PORT': '5432',
     }
 }
