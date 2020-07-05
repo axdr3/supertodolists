@@ -39,7 +39,7 @@ else:
 
 # Application definition
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 INSTALLED_APPS = [
     # 'django.contrib.admin',
     'django.contrib.auth',
@@ -54,9 +54,9 @@ INSTALLED_APPS = [
     'rest_framework'
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'accounts.authentication.PasswordlessAuthenticationBackend',
-]
+# AUTHENTICATION_BACKENDS = [
+#     'accounts.authentication.PasswordlessAuthenticationBackend',
+# ]
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'axdr3test@gmail.com'

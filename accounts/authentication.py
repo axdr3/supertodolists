@@ -3,14 +3,13 @@ from accounts.models import User, Token
 from django.contrib.auth.backends import ModelBackend
 
 
-class PasswordlessAuthenticationBackend(ModelBackend):
+class PasswordAuthenticationBackend(ModelBackend):
 
-    def authenticate(self, request, uid=''):
+    def authenticate(self, request, email=None, password=None):
         try:
             # print(request)
             # print(uid)
             # uid = request.GET.get('token')
-            token = Token.objects.get(uid=uid)
             return User.objects.get(email=token.email)
         except Token.DoesNotExist:
             return None
