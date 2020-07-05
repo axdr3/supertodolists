@@ -12,9 +12,8 @@ auth.signals.user_logged_in.disconnect(auth.models.update_last_login)
 
 class CustomUser(AbstractUser):
     username = None
-    pk = None
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, max_length=10)
     email = models.EmailField(_('email address'), unique=True)
-    # token = models.
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -22,8 +21,3 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
-
-
-class Token(models.Model):
-	email = models.EmailField()
-	uid = models.CharField(default=uuid.uuid4, max_length=20)

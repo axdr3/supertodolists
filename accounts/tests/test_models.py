@@ -1,15 +1,14 @@
 from django.test import TestCase
 from django.contrib import auth
-from accounts.models import Token
 
 User = auth.get_user_model()
 
 
 class UserModelTest(TestCase):
 
-	def test_user_is_valid_with_email_only(self):
-		user = User(email='a@b.com', password='abcdefghjkl')
-		user.full_clean()  # should not raise
+	# def test_user_is_valid_with_email_and_pass(self):
+	# 	user = User(email='a@b.com', password='abcdefghjkl')
+	# 	user.full_clean()  # should not raise
 
 	# def test_email_is_primary_key(self):
 	# 	user = User(email='a@b.com')
@@ -41,11 +40,6 @@ class UserModelTest(TestCase):
 		with self.assertRaises(ValueError):
 			User.objects.create_user(email='', password="foo")
 
-
-
-class TokenModelTest(TestCase):
-
-	def test_links_user_with_auto_generated_id(self):
-		token1 = Token.objects.create(email='a@b.com')
-		token2 = Token.objects.create(email='a@b.com')
-		self.assertNotEqual(token1.uid, token2.uid)
+	def test_uuid_is_pk(self):
+		user = User.objects.create_user(email='normal@user.com', password='foo')
+		self.assertEqual(user.uuid, user.pk)

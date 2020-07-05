@@ -54,9 +54,9 @@ INSTALLED_APPS = [
     'rest_framework'
 ]
 
-# AUTHENTICATION_BACKENDS = [
-#     'accounts.authentication.PasswordlessAuthenticationBackend',
-# ]
+AUTHENTICATION_BACKENDS = [
+    'accounts.authentication.CustomAuthenticationBackend',
+]
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'axdr3test@gmail.com'
