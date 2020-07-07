@@ -5,7 +5,7 @@ admin.autodiscover()
 User = auth.get_user_model()
 from rest_framework import generics, permissions, serializers
 
-from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
+# from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, TokenHasScope
 
 
 

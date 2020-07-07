@@ -13,6 +13,8 @@ def registration_view(request):
 		user = serializer.save()
 		data['response'] = "Successfully registered new user"
 		data['email'] = user.email
+		data['first_name'] = user.first_name
+		data['last_name'] = user.last_name
 	else:
 		data = serializer.errors
 	return Response(data)

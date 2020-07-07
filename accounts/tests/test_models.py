@@ -42,4 +42,4 @@ class UserModelTest(TestCase):
 
 	def test_uuid_is_pk(self):
 		user = User.objects.create_user(email='normal@user.com', password='foo')
-		self.assertEqual(user.uuid, user.pk)
+		self.assertEqual(user.id, user.pk)

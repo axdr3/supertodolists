@@ -23,7 +23,6 @@ class CustomAuthenticationBackend(ModelBackend):
 
     def get_user(self, email):
         try:
-            print(email)
             return User.objects.get(email=email)
         except User.DoesNotExist:
             return None

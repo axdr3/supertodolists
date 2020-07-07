@@ -4,3 +4,5 @@ __pycache__
 geckodriver.*
 .env
 functional_tests/screendumps
+Pipfile
+Pipfile.lock

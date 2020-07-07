@@ -1,6 +1,5 @@
 from django.test import TestCase
-from unittest.mock import patch
-from accounts.models import Token
+from unittest.mock import Mock
 from unittest.mock import patch, call
 import accounts.views
 
@@ -13,23 +12,16 @@ class SendLoginEmailViewTest(TestCase):
 		})
 		self.assertRedirects(response, '/')
 
-	def test_creates_token_associated_with_email(self):
-		self.client.post('/accounts/send_login_email', data={
-			'email': 'edith@example.com'
-		})
-		token = Token.objects.first()
-		self.assertEqual(token.email, 'edith@example.com')
+	# @patch('accounts.views.send_mail')
+	# def test_sends_link_to_login_using_token_uid(self, mock_send_mail):
+	# 	self.client.post('/accounts/send_login_email', data={
+	# 		'email': 'edith@example.com'
+	# 	})
 
-	@patch('accounts.views.send_mail')
-	def test_sends_link_to_login_using_token_uid(self, mock_send_mail):
-		self.client.post('/accounts/send_login_email', data={
-			'email': 'edith@example.com'
-		})
-
-		token = Token.objects.first()
-		expected_url = f'http://testserver/accounts/login?token={token.uid}'
-		(subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
-		self.assertIn(expected_url, body)
+	# 	token = Token.objects.first()
+	# 	expected_url = f'http://testserver/accounts/login?token={token.uid}'
+	# 	(subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
+	# 	self.assertIn(expected_url, body)
 
 	# The patch decorator takes a dot-notation name of an object to monkeypatch. That’s the equivalent of
 	# manually replacing the send_mail in accounts.views. The advantage of the decorator is that,
@@ -71,9 +63,43 @@ class SendLoginEmailViewTest(TestCase):
 		)
 		self.assertEqual(message.tags, "success")
 
+class SignupViewTest(TestCase):
+
+	def test_redirects_to_home_page(self):
+		data = {
+				'email': 'ola@alo.com',
+				'password': 'aloc',
+				'password2': 'aloc',
+			}
+		# request = self.client.get('/accounts/signup')
+		response = self.client.post(
+			'/accounts/signup',
+			data=data
+		)
+		self.assertRedirects(response, '/')
+
+	# def test_user_is_created_after_POST(self):
+	# 	data = {
+	# 			'email': 'ola@alo.com',
+	# 			'password': 'aloc',
+	# 			'password2': 'aloc',
+	# 	}
+	# 	user_mock = Mock(email='ola@alo.com', password='aloc')
+	# 	response = self.client.post(
+	# 		'/accounts/signup',
+	# 		data=data
+	# 	)
+		
+
+
+# @patch('accounts.views.auth')
+class LoginViewTest(TestCase):
+
+	def test_redirects_to_home_page(self, mock_auth):
+		pass
 
 @patch('accounts.views.auth')
-class LoginViewTest(TestCase):
+class LoginViewTest2(TestCase):
 
 	def test_redirects_to_home_page(self, mock_auth):
 		response = self.client.get('/accounts/login?token=abcd123')

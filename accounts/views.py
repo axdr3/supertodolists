@@ -3,7 +3,8 @@ from django.core.mail import send_mail
 from django.contrib import messages, auth
 # from accounts.models import CustomUUID
 from django.urls import reverse
-
+from django.template.loader import get_template
+from .forms import SignupForm
 
 def send_login_email(request):
 	pass
@@ -24,8 +25,19 @@ def send_login_email(request):
 # 	)
 # 	return redirect('/')
 
+def signup(request):
+	if request.method == 'POST':
+		form = SignupForm(data=request.POST)
+		form.save()
+		return redirect('/')
+	# print(form.is_valid())
+	return render(request, 'accounts/signup.html')
 
 def login(request):
+	pass
+	# if request.method == 'POST':
+
+def login2(request):
 	user = auth.authenticate()
 	if user:
 		auth.login(request, user)
