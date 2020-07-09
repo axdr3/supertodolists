@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 # from django.contrib import auth
 from accounts.authentication import CustomAuthenticationBackend
 from unittest.mock import patch, call
+from django.http import HttpRequest
 User = get_user_model()
 
 
@@ -20,6 +21,16 @@ class AuthenticateTest(TestCase):
         result = CustomAuthenticationBackend.authenticate(email='example@email.com', password=password)
         self.assertEqual(result, user)
 
+    def test_user_is_authenticated_after_login(self):
+        password = 'abcdefghjkl'
+        print(User.objects.all())
+        user = User.objects.create_user(email='example@email.com', password=password)
+        # user.is_active = True
+        request = HttpRequest()
+        # request.method = 'POST'
+        # request.user = user
+        response = self.client.post('/accounts/login/', data={'email': 'example@email.com', 'password': password}, follow=True)
+        print(response.context['user'])
     # def test_returns_None_if_no_such_token(self):
     #     result = PasswordlessAuthenticationBackend().authenticate(
     #         'no-such-token'

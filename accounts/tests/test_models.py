@@ -6,9 +6,9 @@ User = auth.get_user_model()
 
 class UserModelTest(TestCase):
 
-	# def test_user_is_valid_with_email_and_pass(self):
-	# 	user = User(email='a@b.com', password='abcdefghjkl')
-	# 	user.full_clean()  # should not raise
+	def test_user_is_valid_with_email_and_pass(self):
+		user = User(email='a@b.com', password='abcdefghjkl')
+		user.full_clean()  # should not raise
 
 	# def test_email_is_primary_key(self):
 	# 	user = User(email='a@b.com')

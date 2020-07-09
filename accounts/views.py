@@ -28,26 +28,29 @@ from . import forms
 # 	return redirect('/')
 
 def signup(request):
-	form = forms.SignupForm()
+	# form = forms.SignupForm()
 	if request.method == 'POST':
 		form = forms.SignupForm(data=request.POST)
 		if form.is_valid():
 			form.save()
 			return redirect('/')
 	# print(form.is_valid())
-	return render(request, 'accounts/signup.html', {'form': form})
+	return render(request, 'accounts/signup.html', {'form': forms.SignupForm()})
 
 def login_view(request):
-	form = forms.LoginForm()
+	# form = forms.LoginForm()
 
 	if request.method == 'POST':
 		form = forms.LoginForm(data=request.POST)
+		print(form)
 		if form.is_valid():
 			user = form.save()
 			auth.login(request, user)
 			return redirect('/')
-	return render(request, 'accounts/login.html', {'form': form})
-	# if request.method == 'POST':
+		else:
+			return render(request, 'accounts/login.html', {'form': form, 'error': form.errors})
+
+	return render(request, 'accounts/login.html', {'form': forms.LoginForm()})
 
 def logout_view(request):
 	auth.logout(request)
