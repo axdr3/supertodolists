@@ -15,17 +15,18 @@
 					{% if user.email %}
 						<ul class="nav navbar-nav navbar-right">
 							<li><a href="{% url 'my_lists' user.email %}">My lists</a></li>
-						</ul>
-						<ul class="nav navbar-nav navbar-right">
 							<li class="navbar-text">Logged in as {{ user.email }}</li>
-							<li><a href="{% url 'logout' %}">Log out</a></li>
+							<li><a href="{% url 'accounts:logout' %}">Log out</a></li>
 						</ul>
 					{% else %}
-						<form class="form-inline navbar-right" method="POST" action="{% url 'send_login_email' %}">
-							<span><small>Enter email to log in:</small></span>
-							<input class="form-control" name="email" type="text" />
-							{% csrf_token %}
-						</form>
+						<ul class="nav navbar-nav navbar-right">
+							<li>
+								<button class='btn btn-primary' href="{% url 'accounts:login' %}">Log in</button>
+							</li>
+							<li class="navbar-text">
+								<button class="btn btn-secondary" href="{% url 'accounts:signup' %}">Signup</button>
+							</li>
+						</ul>
 					{% endif %}
 				</div>
 			</nav>

@@ -40,7 +40,7 @@ class LoginFormTest(TestCase):
 		User.objects.create_user(email='a@b.com', password='aloc')
 		form = LoginForm(data={'email': 'a@b.com', 'password': 'alocc'})
 		self.assertEqual(
-			form.errors['password'][0],
+			form.errors['email'][0],
 			ERR_WRONG_PASS_EMAIL
 		)
 		form = LoginForm(data={'email': 'a@be.com', 'password': 'aloc'})

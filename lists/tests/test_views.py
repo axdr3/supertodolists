@@ -1,11 +1,13 @@
 from django.urls import resolve
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.http import HttpRequest
 from django.utils.html import escape
 from django.template.loader import render_to_string
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.models import AnonymousUser
 from unittest.mock import patch, Mock
+# from unittest import Client
+from django.conf import settings
 from django.http import HttpRequest
 from lists.views import (
 	new_list, home_page, share_list
@@ -255,9 +257,18 @@ class NewListViewIntegratedTest(TestCase):
 
 	def test_list_owner_is_saved_if_user_is_authenticated(self):
 		user = User.objects.create(email='a@b.com')
-		self.client.force_login(user)
-		self.client.post('/lists/new', data={'text': 'new item'})
+		user.set_password('12345')
+		user.save(force_update=True)
+		print(User.objects.all())
+		a=self.client.login(email='a@b.com', password='12345')
+		b=self.client.force_login(user, backend='django.contrib.auth.backends.ModelBackend')
+		print(a)
+		print(b)
+		# authenticate(email='a@b.com', password='12345')
+		# self.client.login(email='a@b.com', password='12345')
+		response = self.client.post('/lists/new', data={'text': 'new item'})
 		list_ = List.objects.first()
+		print(f'Lista {list_.owner}')
 		self.assertEqual(list_.owner, user)
 
 

@@ -55,12 +55,12 @@ class LoginForm(forms.models.ModelForm):
 		email = cleaned_data.get('email')
 		password = cleaned_data.get('password')
 
-		try:
-			user = User.objects.all().get(email=email)
-		except User.DoesNotExist:
-			raise ValidationError({'email': ERR_WRONG_PASS_EMAIL})
-
 		if authenticate(email=email, password=password):
 			return cleaned_data
+		else:
+			raise ValidationError({'email': ERR_WRONG_PASS_EMAIL})
 
-		raise ValidationError({'password': ERR_WRONG_PASS_EMAIL})
+	def save(self):
+		self.is_valid()
+		user = User.objects.all().get(email=self.cleaned_data['email'])
+		return user

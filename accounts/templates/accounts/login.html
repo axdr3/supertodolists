@@ -1,5 +1,5 @@
 {% extends 'lists/base.html' %}
-{% block content %}
+{% block list_form %}
 
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
@@ -14,7 +14,7 @@
     {% endif %}
 {% endif %}
 
-<form method="post" action="{% url 'login' %}">
+<form method="post" action="{% url 'accounts:login' %}">
 {% csrf_token %}
 <table>
 <tr>

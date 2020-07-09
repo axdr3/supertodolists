@@ -4,10 +4,12 @@ from django.contrib import messages, auth
 # from accounts.models import CustomUUID
 from django.urls import reverse
 from django.template.loader import get_template
-from .forms import SignupForm
+# from .forms import SignupForm
+from . import forms
+# import accounts.forms
 
-def send_login_email(request):
-	pass
+
+# def send_signup_email(request):
 # 	email = request.POST['email']
 # 	uuid = CustomUUID.objects.create(email=email)
 # 	url = request.build_absolute_uri(
@@ -26,22 +28,26 @@ def send_login_email(request):
 # 	return redirect('/')
 
 def signup(request):
+	form = forms.SignupForm()
 	if request.method == 'POST':
-		form = SignupForm(data=request.POST)
-		form.save()
-		return redirect('/')
+		form = forms.SignupForm(data=request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect('/')
 	# print(form.is_valid())
-	return render(request, 'accounts/signup.html')
+	return render(request, 'accounts/signup.html', {'form': form})
 
-def login(request):
-	pass
+def login_view(request):
+	form = forms.LoginForm()
+
+	if request.method == 'POST':
+		form = forms.LoginForm(data=request.POST)
+		if form.is_valid():
+			user = form.save()
+			auth.login(request, user)
+			return redirect('/')
+	return render(request, 'accounts/login.html', {'form': form})
 	# if request.method == 'POST':
-
-def login2(request):
-	user = auth.authenticate()
-	if user:
-		auth.login(request, user)
-	return redirect('/')
 
 def logout_view(request):
 	auth.logout(request)

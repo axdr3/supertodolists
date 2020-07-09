@@ -39,12 +39,12 @@ class List(models.Model):
 def shared_with_changed(sender, instance, pk_set, action, **kwargs):
 	# instance: the list being modified
 	# sender: shared_with
-	print(f'Sender {sender}')
+	# print(f'Sender {sender}')
 	print(f'Action {action}')
 	print(f'pk_set {pk_set}')
-	print(f'Instance owner {instance.owner.email}')
+	print(f'Instance owner pk {instance.owner.pk}')
 	if action == 'post_add':
-		if instance.owner.email in pk_set:
+		if instance.owner.pk in pk_set:
 			print('ERR: cannot add list owner to shared_with')
 			sender.delete(instance.owner)
 
@@ -54,7 +54,7 @@ m2m_changed.connect(shared_with_changed, sender=List.shared_with.through)
 
 class Item(models.Model):
 	text = models.TextField(default='')
-	list = models.ForeignKey(List, blank=True, null=True, 
+	list = models.ForeignKey(List, blank=True, null=True,
 		on_delete=models.CASCADE)
 
 	# Just like ModelForms, models have a class Meta, and that’s where we can impl

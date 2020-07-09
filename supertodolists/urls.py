@@ -24,9 +24,9 @@ from lists.api import router
 urlpatterns = [
 	path('', home_page, name='home'),
 	path('lists/', include('lists.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
     # path('api/', include(api_urls)),
     path('api/', include(router.urls)),
-    path('api/accounts/', include('accounts.api.urls', 'accounts_api')),
+    path('api/accounts/', include('accounts.api.urls', namespace='accounts_api')),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
