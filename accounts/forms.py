@@ -13,7 +13,7 @@ ERR_WRONG_PASS_EMAIL = 'Email or password is incorrect.'
 
 class SignupForm(forms.models.ModelForm):
 
-	# password = forms.CharField(widget=forms.PasswordInput)
+	password = forms.CharField(widget=forms.PasswordInput)
 	password2 = forms.CharField(widget=forms.PasswordInput)
 
 	def clean(self):
@@ -33,7 +33,7 @@ class SignupForm(forms.models.ModelForm):
 			return cleaned_data
 
 	def save(self):
-		# saved = super(LoginForm, self).save()
+		# super().save()
 		# cleaned_data = self.clean()
 		# self.is_valid()
 		user = User.objects.create_user(
@@ -70,6 +70,8 @@ class LoginForm(forms.Form):
 			raise ValidationError({'email': ERR_WRONG_PASS_EMAIL})
 
 	def save(self):
+		# super(LoginForm, self).save()
+
 		email = self.cleaned_data.get('email')
 		user = User.objects.all().get(email=email)
 		return user

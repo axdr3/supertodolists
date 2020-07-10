@@ -14,17 +14,21 @@
 					<a class="form-inline" href="/">Supertodolists</a>
 					{% if user.email %}
 						<ul class="nav navbar-nav navbar-right">
-							<li><a href="{% url 'my_lists' user.email %}">My lists</a></li>
 							<li class="navbar-text">Logged in as {{ user.email }}</li>
-							<li><a href="{% url 'accounts:logout' %}">Log out</a></li>
+							<li class="navbar-text"><a href="{% url 'my_lists' user.email %}">My lists</a></li>
+							<li class="navbar-text"><a href="{% url 'accounts:logout' %}">Log out</a></li>
 						</ul>
 					{% else %}
 						<ul class="nav navbar-nav navbar-right">
-							<li>
-								<button class='btn btn-primary' href="{% url 'accounts:login' %}">Log in</button>
+							<li class="navbar-text">
+								<button class='btn btn-primary'>
+									<a href="{% url 'accounts:login' %}">Log in</a>
+								</button>
 							</li>
 							<li class="navbar-text">
-								<button class="btn btn-secondary" href="{% url 'accounts:signup' %}">Signup</button>
+								<button class="btn btn-secondary">
+									<a href="{% url 'accounts:signup' %}">Signup</a>
+								</button>
 							</li>
 						</ul>
 					{% endif %}

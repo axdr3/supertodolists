@@ -27,9 +27,10 @@ class SignupFormTest(TestCase):
 		)
 
 	def test_able_to_signup(self):
+		# print(User.objects.all())
 		form = SignupForm(data={'email': 'a@b.com', 'password': 'aloc', 'password2': 'aloc'})
 		# print(form)
-		form.is_valid()
+		self.assertTrue(form.is_valid())
 		user = form.save()
 		self.assertIn(user, User.objects.all())
 
