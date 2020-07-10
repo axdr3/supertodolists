@@ -29,6 +29,7 @@ class SignupFormTest(TestCase):
 	def test_able_to_signup(self):
 		form = SignupForm(data={'email': 'a@b.com', 'password': 'aloc', 'password2': 'aloc'})
 		# print(form)
+		form.is_valid()
 		user = form.save()
 		self.assertIn(user, User.objects.all())
 
@@ -49,8 +50,10 @@ class LoginFormTest(TestCase):
 			ERR_WRONG_PASS_EMAIL
 		)
 
-	# def test_user_is_authenticated_after_form_completion(self):
-	# 	user = User.objects.create_user(email='a@b.com', password='aloc')
-	# 	form = LoginForm(data={'email': 'a@b.com', 'password': 'alocc'})
-	# 	self.client.get()
-	# 	self.assertTrue()
+	def test_user_is_authenticated_after_form_completion(self):
+		user = User.objects.create_user(email='a@b.com', password='aloc')
+		form = LoginForm(data={'email': 'a@b.com', 'password': 'aloc'})
+		self.assertTrue(form.is_valid())
+		user2 = form.save()
+		self.assertEqual(user, user2)
+		self.assertTrue(user2.is_authenticated)

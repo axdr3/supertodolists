@@ -12,25 +12,21 @@ class AuthenticateTest(TestCase):
     def test_returns_None_if_no_password(self):
         password = 'abcdefghjkl'
         User.objects.create_user(email='example@email.com', password=password)
-        result = CustomAuthenticationBackend.authenticate(email='example@email.com')
+        result = CustomAuthenticationBackend.authenticate(self, email='example@email.com')
         self.assertIsNone(result)
 
     def test_returns_user_if_password_good(self):
         password = 'abcdefghjkl'
         user = User.objects.create_user(email='example@email.com', password=password)
-        result = CustomAuthenticationBackend.authenticate(email='example@email.com', password=password)
+        result = CustomAuthenticationBackend.authenticate(self, email='example@email.com', password=password)
         self.assertEqual(result, user)
 
-    def test_user_is_authenticated_after_login(self):
+    def test_user_is_authenticated_after_POST(self):
         password = 'abcdefghjkl'
-        print(User.objects.all())
         user = User.objects.create_user(email='example@email.com', password=password)
-        # user.is_active = True
-        request = HttpRequest()
-        # request.method = 'POST'
-        # request.user = user
-        response = self.client.post('/accounts/login/', data={'email': 'example@email.com', 'password': password}, follow=True)
-        print(response.context['user'])
+        response = self.client.post('/accounts/login/',  data={'email': 'example@email.com', 'password': password}, follow=True)
+        self.assertTrue(response.context['user'].is_authenticated)
+
     # def test_returns_None_if_no_such_token(self):
     #     result = PasswordlessAuthenticationBackend().authenticate(
     #         'no-such-token'

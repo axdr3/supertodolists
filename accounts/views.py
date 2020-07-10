@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib import messages, auth
 # from accounts.models import CustomUUID
+from .authentication import CustomAuthenticationBackend
 from django.urls import reverse
 from django.template.loader import get_template
 # from .forms import SignupForm
@@ -32,20 +33,27 @@ def signup(request):
 	if request.method == 'POST':
 		form = forms.SignupForm(data=request.POST)
 		if form.is_valid():
+			print('oi')
 			form.save()
 			return redirect('/')
-	# print(form.is_valid())
+		else:
+			render(request, 'accounts/signup.html', {'form': form})
 	return render(request, 'accounts/signup.html', {'form': forms.SignupForm()})
 
 def login_view(request):
 	# form = forms.LoginForm()
 
 	if request.method == 'POST':
-		form = forms.LoginForm(data=request.POST)
-		print(form)
+		form = forms.LoginForm(request=request, data=request.POST)
+		# print(form)
 		if form.is_valid():
-			user = form.save()
-			auth.login(request, user)
+			user = auth.authenticate(
+					request,
+				 	email=form.cleaned_data.get('email'),
+				 	password=form.cleaned_data.get('password')
+					)
+			auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
 			return redirect('/')
 		else:
 			return render(request, 'accounts/login.html', {'form': form, 'error': form.errors})

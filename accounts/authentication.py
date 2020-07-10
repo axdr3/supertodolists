@@ -7,20 +7,21 @@ User = get_user_model()
 
 class CustomAuthenticationBackend(ModelBackend):
 
-    def authenticate(self, request, email=None, password=None, **kwargs):
+    def authenticate(self, email=None, password=None, **kwargs):
         try:
             # print(request)
             # print(uid)
             # uid = request.GET.get('token')
-            user = User.objects.get(email=email)
-
+            user = User.objects.all().get(email=email)
+            if not check_password(password, user.password):
+                print('no matching passwords : authenticate')
+                return None
         except User.DoesNotExist:
+            print('user nao existe: authenticate')
+
             return None
 
         print(f'user{user.email} pass{user.password}')
-        if not check_password(password, user.password):
-            return None
-
         return user
 
 
