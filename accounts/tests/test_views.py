@@ -3,6 +3,8 @@ from django.test import TestCase, Client
 from unittest.mock import patch, call
 from django.http import HttpRequest
 import accounts.views
+from django.contrib.messages.middleware import MessageMiddleware
+from django.contrib.sessions.middleware import SessionMiddleware
 from accounts.views import signup, login_view, logout_view
 # import unittest.skip
 
@@ -22,7 +24,12 @@ class SignupViewTest(TestCase):
 		}
 		self.request.method = 'POST'
 		self.request.POST = data
-
+		middleware = SessionMiddleware()
+		middleware.process_request(self.request)
+		self.request.session.save()
+		middleware = MessageMiddleware()
+		middleware.process_request(self.request)
+		self.request.session.save()
 
 	def test_redirects_to_home_page(self, mock_form):
 
@@ -34,7 +41,7 @@ class SignupViewTest(TestCase):
 	def test_renders_correct_html(self, mock_render, mock_form):
 		self.request.method = 'GET'
 		mock_a_form = mock_form.return_value
-		response = signup(self.request)
+		signup(self.request)
 		# response.client = Client()
 		mock_render.assert_called_once_with(self.request, 'accounts/signup.html', {'form': mock_a_form})
 		# self.assertTemplateUsed(response, '/accounts/signup.html')
@@ -71,6 +78,12 @@ class LoginViewTest(TestCase):
 				'password': 'aloc666123',
 		}
 		self.request.POST = data
+		middleware = SessionMiddleware()
+		middleware.process_request(self.request)
+		self.request.session.save()
+		middleware = MessageMiddleware()
+		middleware.process_request(self.request)
+		self.request.session.save()
 
 	def test_redirects_to_home_page(self, mock_login, mock_auth):
 		self.request.method = 'POST'
@@ -85,7 +98,7 @@ class LoginViewTest(TestCase):
 	def test_renders_correct_html(self, mock_render, mock_login, mock_auth):
 		self.request.method = 'GET'
 		mock_a_login = mock_login.return_value
-		response = login_view(self.request)
+		login_view(self.request)
 		# response.client = Client()
 		mock_render.assert_called_once_with(self.request, 'accounts/login.html', {'form': mock_a_login})
 
@@ -94,14 +107,14 @@ class LoginViewTest(TestCase):
 		self.request.method = 'POST'
 		mock_a_login = mock_login.return_value
 		mock_a_login.is_valid.return_value = True
-		response = login_view(self.request)
+		login_view(self.request)
 		mock_auth.login.assert_called_once()
 
 	def test_doesnt_login_if_loginform_not_valid(self, mock_login, mock_auth):
 		self.request.method = 'POST'
 		mock_a_login = mock_login.return_value
 		mock_a_login.is_valid.return_value = False
-		response = login_view(self.request)
+		login_view(self.request)
 		mock_auth.login.assert_not_called()
 
 	def test_redirect_homepage_if_already_loggedin(self, mock_login, mock_auth):

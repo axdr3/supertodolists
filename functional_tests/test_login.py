@@ -13,47 +13,48 @@ SUBJECT = 'Your login link for Supertodolists'
 
 
 class LoginTest(FunctionalTest):
+	def test_can_signup_and_then_login(self):
 
-	def test_can_get_email_link_to_log_in(self):
-		# Edith goes to the awesome superlists site
-		# and notices a "Log in" section in the navbar for the first time
-		# It's telling her to enter her email address, so she does
+		test_password = 'meudeusdoc3u'
 		if self.staging_server:
 			test_email = 'axdr3test@gmail.com'
 		else:
 			test_email = 'edith@example.com'
-
+		# Edith opens supertodolists page
+		# Notices a Signup button
+		# Click on it
 		self.browser.get(self.live_server_url)
+		self.browser.find_element_by_name('signup-btn').click()
 		self.browser.find_element_by_name('email').send_keys(test_email)
-		self.browser.find_element_by_name('email').send_keys(Keys.ENTER)
+		self.browser.find_element_by_name('password').send_keys(test_password)
+		self.browser.find_element_by_name('password2').send_keys(test_password)
+		self.browser.find_element_by_name('submit-btn').click()
 
-		time.sleep(2)
 		# A message appears telling her an email has been sent
 		self.wait_for(lambda: self.assertIn(
-			'Check your email',
+			"You will be mailed a confirmation link to your email soon.",
+			self.browser.find_element_by_tag_name('body').text
+		))
+		# She is then redirected to the home page
+		self.wait_for(lambda: self.assertURLEqual(
+			self.live_server_url + '/',
+			self.browser.current_url
+			)
+		)
+
+		# She notices a Log in button
+		# Clicks on it
+
+		self.browser.find_element_by_name('login-btn').click()
+		self.browser.find_element_by_name('email').send_keys(test_email)
+		self.browser.find_element_by_name('password').send_keys(test_password)
+		self.browser.find_element_by_name('submit-btn').click()
+
+		self.wait_for(lambda: self.assertIn(
+			f"You are now logged in as {test_email}",
 			self.browser.find_element_by_tag_name('body').text
 		))
 
-		time.sleep(2)
-		# She checks her email and finds a message
-		body = self.wait_for_email(test_email, SUBJECT)
-		# It has a url link in it
-		self.assertIn('Use this link to log in', body)
-		url_search = re.search(r'http://.+/.+$', body)
-		if not url_search:
-			self.fail(f'Could not find url in email body:\n{body}')
-		url = url_search.group(0)
-		self.assertIn(self.live_server_url, url)
-
-		self.browser.get(url)
-		# she is logged in!
-		self.wait_to_be_logged_in(email=test_email)
-
-        # Now she logs out
-		self.browser.find_element_by_link_text('Log out').click()
-
-        # She is logged out
-		self.wait_to_be_logged_out(email=test_email)
 
 	def wait_for_email(self, test_email, subject):
 		if not self.staging_server:

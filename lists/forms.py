@@ -58,6 +58,7 @@ class ExistingListItemForm(ItemForm):
 class NewListForm(ItemForm):
 
 	def save(self, owner):
+		print(f'Owner is is_authenticated {owner.is_authenticated}')
 		print(f'Owner {owner}')
 		if owner.is_authenticated:
 			return List.create_new(first_item_text=self.cleaned_data['text'], owner=owner)

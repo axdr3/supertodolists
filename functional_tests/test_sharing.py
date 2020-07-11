@@ -16,7 +16,8 @@ class SharingTest(FunctionalTest):
 
     def test_can_share_a_list_with_another_user(self):
         # Edith is a logged-in user
-        self.create_pre_authenticated_session('edith@example.com')
+        self.create_pre_authenticated_session('edith@example.com', 'alo666')
+
         edith_browser = self.browser
         self.addCleanup(lambda: quit_if_possible(edith_browser))
 
@@ -25,7 +26,7 @@ class SharingTest(FunctionalTest):
         self.browser.get(self.live_server_url)
         list_page = ListPage(self).add_list_item('Get help')
         # self.add_list_item('Get help')
-
+        time.sleep(10)
         # She notices a "Share this list" option
         share_box = self.browser.find_element_by_css_selector(
             'input[name="sharee"]'
@@ -40,7 +41,7 @@ class SharingTest(FunctionalTest):
         oni_browser = webdriver.Firefox()
         self.browser = oni_browser
         self.addCleanup(lambda: quit_if_possible(oni_browser))
-        self.create_pre_authenticated_session('oniciferous@example.com')
+        self.create_pre_authenticated_session('oniciferous@example.com', 'alo666')
         self.browser.get(self.live_server_url)
 
         oni_browser = self.browser

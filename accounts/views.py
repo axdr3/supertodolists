@@ -33,8 +33,11 @@ def signup(request):
 	if request.method == 'POST':
 		form = forms.SignupForm(data=request.POST)
 		if form.is_valid():
-			print('oi')
 			form.save()
+			messages.success(
+				request,
+				"You will be mailed a confirmation link to your email soon."
+			)
 			return redirect('/')
 		else:
 			render(request, 'accounts/signup.html', {'form': form})
@@ -47,16 +50,21 @@ def login_view(request):
 		form = forms.LoginForm(request=request, data=request.POST)
 		# print(form)
 		if form.is_valid():
+			email = form.cleaned_data.get('email')
 			user = auth.authenticate(
 					request,
-				 	email=form.cleaned_data.get('email'),
+				 	email=email,
 				 	password=form.cleaned_data.get('password')
 					)
+			print(user)
 			auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-
+			messages.success(
+				request,
+				f'You are now logged in as {email}'
+			)
 			return redirect('/')
 		else:
-			return render(request, 'accounts/login.html', {'form': form, 'error': form.errors})
+			return render(request, 'accounts/login.html', {'form': form})
 
 	return render(request, 'accounts/login.html', {'form': forms.LoginForm()})
 

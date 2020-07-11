@@ -24,7 +24,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 		self.browser = webdriver.Firefox()
 		self.staging_server = os.environ.get('STAGING_SERVER')
 		if self.staging_server:
-			self.live_server_url = 'http://' + self.staging_server
+			self.live_server_url = 'http://' + self.staging_server + '/'
 			reset_database(self.staging_server)
 
 	def tearDown(self):
@@ -39,11 +39,12 @@ class FunctionalTest(StaticLiveServerTestCase):
 		self.browser.quit()
 		super().tearDown()
 
-	def create_pre_authenticated_session(self, email):
+	def create_pre_authenticated_session(self, email, password):
 		if self.staging_server:
-		    session_key = create_session_on_server(self.staging_server, email)
+			pass
+		    # session_key = create_session_on_server(self.staging_server, email, password)
 		else:
-		    session_key = create_pre_authenticated_session(email)
+		    session_key = create_pre_authenticated_session(email, password)
 		## to set a cookie we need to first visit the domain.
 		## 404 pages load the quickest!
 		self.browser.get(self.live_server_url + "/404_no_such_url/")
@@ -53,8 +54,10 @@ class FunctionalTest(StaticLiveServerTestCase):
 		self.browser.add_cookie(dict(
 		    name=settings.SESSION_COOKIE_NAME,
 		    value=session_key,
+		    secure=False,
 		    path='/',
 		))
+		self.browser.refresh()
 
 	def _test_has_failed(self):
 		# slightly obscure but couldn't find a better way!
@@ -130,6 +133,6 @@ class FunctionalTest(StaticLiveServerTestCase):
 
 	@wait
 	def wait_to_be_logged_out(self, email):
-		self.browser.find_element_by_name('email')
+		self.browser.find_element_by_name('Log in')
 		navbar = self.browser.find_element_by_css_selector('.navbar')
 		self.assertNotIn(email, navbar.text)
