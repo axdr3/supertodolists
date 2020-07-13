@@ -6,7 +6,7 @@ import poplib
 
 from .base import FunctionalTest
 
-SUBJECT = 'Your confirmation link for Supertodolists'
+SUBJECT = 'Activate Your Supertodolists Account'
 
 
 class LoginTest(FunctionalTest):
@@ -43,9 +43,35 @@ class LoginTest(FunctionalTest):
 
 		# She goes to her email and sees that she receives the confirmation email
 
-		email = self.wait_for_email(test_email, SUBJECT)
-		print(email)
+		email_body = self.wait_for_email(test_email, SUBJECT)
+		res = email_body.split()
+		count = len(res)
+		res = res[count-1]
+
+		## She clicks the link and is redirected
+		self.browser.get(res)
+		self.wait_for(lambda: self.assertURLEqual(
+			self.live_server_url + '/',
+			self.browser.current_url
+			)
+		)
+
+		#She notices she is logged in
+		self.wait_for(lambda: self.assertIn(
+			test_email,
+			self.browser.find_element_by_name('userLogged').text
+		))
+
+		# She logs out just for fun
+
+		self.browser.find_element_by_name('logout-btn').click()
+
+
 		# She notices a Log in button
+		self.wait_for(lambda: self.assertIn(
+			'Log in',
+			self.browser.find_element_by_name('login-btn').text
+		))
 		# Clicks on it
 
 		self.browser.find_element_by_name('login-btn').click()

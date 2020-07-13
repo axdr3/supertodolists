@@ -2,10 +2,13 @@ from unittest.mock import Mock
 from django.test import TestCase, Client
 from unittest.mock import patch, call
 from django.http import HttpRequest
+from django.core import mail
 import accounts.views
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sessions.middleware import SessionMiddleware
-from accounts.views import signup, login_view, logout_view, send_signup_email
+from accounts.views import signup, login_view, logout_view, activate_account
+import string
+import re
 # import unittest.skip
 
 @patch('accounts.views.forms.SignupForm')
@@ -30,6 +33,7 @@ class SignupViewTest(TestCase):
 		middleware = MessageMiddleware()
 		middleware.process_request(self.request)
 		self.request.session.save()
+		self.request.META['HTTP_HOST'] = '127.0.0.1'
 
 	def test_redirects_to_home_page(self, mock_form):
 
@@ -68,10 +72,12 @@ class SignupViewTest(TestCase):
 	def test_confirmation_email_is_sent(self, mock_form):
 		mock_a_form = mock_form.return_value
 		mock_a_form.is_valid.return_value = True
-		mock_a_form.save.return_value = Mock(email=self.request.POST.get('email'), pk='abcdefg1234567')
-		# user = self.request.user
-		send_signup_email(self.request, mock_a_form.save.return_value)
-
+		mock_a_form.save.return_value = Mock(data=self.request.POST)
+		mock_user = mock_a_form.save.return_value
+		signup(self.request)
+		email = mail.outbox[0]
+		self.assertIn(mock_user.email, email.to)
+		self.assertEqual(email.subject, 'Activate Your Supertodolists Account')
 
 
 @patch('accounts.views.auth')
@@ -141,3 +147,54 @@ class LoginViewTest(TestCase):
 		# self.request.user = None
 		logout_view(self.request)
 		self.assertTrue(mock_auth.logout.return_value)
+
+	# def test_doesnt_login_if_not_email_activated(self, mock_login, mock_auth):
+	# 	self.request.method = 'POST'
+	# 	# self.request.user = Mock()
+	# 	response = login_view(self.request)
+	# 	response.client = Client()
+
+
+
+class ActivateAccTest(TestCase):
+
+	def test_email_sent(self):
+		password = 'abcdegfd'
+		email = 'example@gmail.com'
+		self.client.post(
+			'/accounts/signup/',
+			data={'email': 'example@email.com', 'password': password, 'password2': password},
+			follow=True
+		)
+		# self.assertTemplateUsed()
+		print(mail.outbox[0].from_email)
+		self.assertIn('Please click on the link below to confirm your registration:', mail.outbox[0].body)
+
+	def test_user_is_authenticated_after_activation(self):
+		password = 'abcdegfd'
+		email = 'example@gmail.com'
+		self.client.post(
+			'/accounts/signup/',
+			data={'email': 'example@email.com', 'password': password, 'password2': password},
+			follow=True
+		)
+		email_body = mail.outbox[0].body
+		# res = re.sub('['+string.punctuation+']', '', email_body).split()
+		res = email_body.split()
+		count = len(res)
+		res = res[count-1]
+		response = self.client.get(res, follow=True)
+		self.assertTrue(response.context['user'].is_authenticated)
+		# print()
+
+	def test_doesnt_login_if_not_email_activated(self):
+		password = 'abcdegfd'
+		email = 'example@gmail.com'
+		self.client.post(
+			'/accounts/signup/',
+			data={'email': 'example@email.com', 'password': password, 'password2': password},
+			follow=True
+		)
+		response = self.client.get('/accounts/login', data={'email': email, 'password': password}, follow=True)
+		self.assertFalse(response.context['user'].is_authenticated)
+		print(response.context['user'])

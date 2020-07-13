@@ -31,3 +31,5 @@ class CustomUser(AbstractUser):
 def update_user(sender, instance, **kwargs):
     if not instance.email_confirmed:
         instance.is_active = False
+    else:
+    	instance.is_active = True

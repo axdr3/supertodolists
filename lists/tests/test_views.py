@@ -258,11 +258,10 @@ class NewListViewIntegratedTest(TestCase):
 	def test_list_owner_is_saved_if_user_is_authenticated(self):
 		user = User.objects.create(email='a@b.com')
 		user.set_password('12345')
+		user.email_confirmed = True
 		user.save(force_update=True)
-		print(User.objects.all())
-		a=self.client.login(email='a@b.com', password='12345')
+		# a=self.client.login(email='a@b.com', password='12345')
 		b=self.client.force_login(user, backend='django.contrib.auth.backends.ModelBackend')
-		print(a)
 		print(b)
 		# authenticate(email='a@b.com', password='12345')
 		# self.client.login(email='a@b.com', password='12345')

@@ -24,6 +24,8 @@ class AuthenticateTest(TestCase):
     def test_user_is_authenticated_after_POST(self):
         password = 'abcdefghjkl'
         user = User.objects.create_user(email='example@email.com', password=password)
+        user.email_confirmed = True
+        user.save()
         response = self.client.post('/accounts/login/',  data={'email': 'example@email.com', 'password': password}, follow=True)
         self.assertTrue(response.context['user'].is_authenticated)
 

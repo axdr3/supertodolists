@@ -18,7 +18,6 @@ class UserModelTest(TestCase):
 		auth.login(request, user)  # should not raise
 
 	def test_create_user(self):
-		# User = get_user_model()
 		user = User.objects.create_user(email='normal@user.com', password='foo')
 		self.assertEqual(user.email, 'normal@user.com')
 		# self.assertTrue(user.is_active)
@@ -47,4 +46,9 @@ class UserModelTest(TestCase):
 		self.assertFalse(user.email_confirmed)
 		self.assertFalse(user.is_active)
 
-
+	def test_user_is_active_signal_after_email_confirmed_true(self):
+		user = User(email='normal@user.com', password='foo')
+		user.save()
+		user.email_confirmed = True
+		user.save()
+		self.assertTrue(user.is_active)

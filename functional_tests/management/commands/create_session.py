@@ -17,7 +17,8 @@ class Command(BaseCommand):
 
 def create_pre_authenticated_session(email, password):
     user = User.objects.create_user(email=email, password=password)
-    # user.save()
+    user.email_confirmed = True
+    user.save()
     print(user.pk)
     session = SessionStore()
     session[SESSION_KEY] = str(user.pk)

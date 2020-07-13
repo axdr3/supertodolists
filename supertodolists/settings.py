@@ -23,7 +23,7 @@ if 'DJANGO_DEBUG_FALSE' in os.environ:
 else:
     DEBUG = True
     SECRET_KEY = 'insecure-key-for-dev'
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['127.0.0.1']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'lists',
     'accounts',
     'functional_tests',
