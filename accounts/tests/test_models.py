@@ -10,9 +10,6 @@ class UserModelTest(TestCase):
 		user = User(email='a@b.com', password='abcdefghjkl')
 		user.full_clean()  # should not raise
 
-	# def test_email_is_primary_key(self):
-	# 	user = User(email='a@b.com')
-	# 	self.assertEqual(user.pk, 'a@b.com')
 
 	def test_no_problem_with_auth_login(self):
 		user = User.objects.create(email='edith@example.com')
@@ -24,7 +21,7 @@ class UserModelTest(TestCase):
 		# User = get_user_model()
 		user = User.objects.create_user(email='normal@user.com', password='foo')
 		self.assertEqual(user.email, 'normal@user.com')
-		self.assertTrue(user.is_active)
+		# self.assertTrue(user.is_active)
 		self.assertFalse(user.is_staff)
 		self.assertFalse(user.is_superuser)
 		try:
@@ -43,3 +40,11 @@ class UserModelTest(TestCase):
 	def test_uuid_is_pk(self):
 		user = User.objects.create_user(email='normal@user.com', password='foo')
 		self.assertEqual(user.id, user.pk)
+
+	def test_email_confirmation_and_is_active_are_False(self):
+		user = User(email='normal@user.com', password='foo')
+		user.save()
+		self.assertFalse(user.email_confirmed)
+		self.assertFalse(user.is_active)
+
+

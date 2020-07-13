@@ -5,7 +5,7 @@ from django.http import HttpRequest
 import accounts.views
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sessions.middleware import SessionMiddleware
-from accounts.views import signup, login_view, logout_view
+from accounts.views import signup, login_view, logout_view, send_signup_email
 # import unittest.skip
 
 @patch('accounts.views.forms.SignupForm')
@@ -65,6 +65,14 @@ class SignupViewTest(TestCase):
 		signup(self.request)
 		self.assertFalse(mock_a_form.save.called)
 
+	def test_confirmation_email_is_sent(self, mock_form):
+		mock_a_form = mock_form.return_value
+		mock_a_form.is_valid.return_value = True
+		mock_a_form.save.return_value = Mock(email=self.request.POST.get('email'), pk='abcdefg1234567')
+		# user = self.request.user
+		send_signup_email(self.request, mock_a_form.save.return_value)
+
+
 
 @patch('accounts.views.auth')
 @patch('accounts.views.forms.LoginForm')
@@ -101,7 +109,6 @@ class LoginViewTest(TestCase):
 		login_view(self.request)
 		# response.client = Client()
 		mock_render.assert_called_once_with(self.request, 'accounts/login.html', {'form': mock_a_login})
-
 
 	def test_calls_auth_login_with_user_if_there_is_one(self, mock_login, mock_auth):
 		self.request.method = 'POST'

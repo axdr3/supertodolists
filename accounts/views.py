@@ -10,34 +10,33 @@ from . import forms
 # import accounts.forms
 
 
-# def send_signup_email(request):
-# 	email = request.POST['email']
-# 	uuid = CustomUUID.objects.create(email=email)
-# 	url = request.build_absolute_uri(
-# 		reverse('login') + '?CustomUUID=' + str(uuid.uid))
-# 	message_body = f'Use this link to log in:\n\n{url}'
-# 	send_mail(
-# 		'Your login link for Supertodolists',
-# 		message_body,
-# 		'noreply@supertodolists',
-# 		[email],
-# 	)
-# 	messages.success(
-# 		request,
-# 		"Check your email, we've sent you a link you can use to log in."
-# 	)
-# 	return redirect('/')
+def send_signup_email(request, user):
+	# url = request.build_absolute_uri(
+	# 	reverse('login') + '?CustomUUID=' + str(uuid.uid))
+	# message_body = f'Use this link to confirm sign up:\n\n{url}'
+	# send_mail(
+	# 	'Your login link for Supertodolists',
+	# 	message_body,
+	# 	'noreply@supertodolists',
+	# 	[user.email],
+	# )
+	# messages.success(
+	# 	request,
+	# 	"Check your email, we've sent you a link you can use to log in."
+	# )
+	return redirect('/')
 
 def signup(request):
 	# form = forms.SignupForm()
 	if request.method == 'POST':
 		form = forms.SignupForm(data=request.POST)
 		if form.is_valid():
-			form.save()
+			user = form.save()
 			messages.success(
 				request,
 				"You will be mailed a confirmation link to your email soon."
 			)
+			# send_signup_email(request, user)
 			return redirect('/')
 		else:
 			render(request, 'accounts/signup.html', {'form': form})

@@ -1,15 +1,12 @@
 from django.core import mail
 from selenium.webdriver.common.keys import Keys
-import re
 import time
 import os
 import poplib
-import pprint
 
 from .base import FunctionalTest
 
-# test_email = 'edith@example.com'
-SUBJECT = 'Your login link for Supertodolists'
+SUBJECT = 'Your confirmation link for Supertodolists'
 
 
 class LoginTest(FunctionalTest):
@@ -22,13 +19,15 @@ class LoginTest(FunctionalTest):
 			test_email = 'edith@example.com'
 		# Edith opens supertodolists page
 		# Notices a Signup button
-		# Click on it
+		# Clicks on it
 		self.browser.get(self.live_server_url)
 		self.browser.find_element_by_name('signup-btn').click()
 		self.browser.find_element_by_name('email').send_keys(test_email)
 		self.browser.find_element_by_name('password').send_keys(test_password)
 		self.browser.find_element_by_name('password2').send_keys(test_password)
 		self.browser.find_element_by_name('submit-btn').click()
+
+		# A confirmation email is sent to her email
 
 		# A message appears telling her an email has been sent
 		self.wait_for(lambda: self.assertIn(
@@ -42,6 +41,10 @@ class LoginTest(FunctionalTest):
 			)
 		)
 
+		# She goes to her email and sees that she receives the confirmation email
+
+		email = self.wait_for_email(test_email, SUBJECT)
+		print(email)
 		# She notices a Log in button
 		# Clicks on it
 
