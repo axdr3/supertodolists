@@ -56,7 +56,6 @@ def login_view(request):
 				 	email=email,
 				 	password=form.cleaned_data.get('password')
 					)
-			print(user)
 			auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 			messages.success(
 				request,
