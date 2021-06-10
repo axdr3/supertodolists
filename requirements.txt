@@ -5,7 +5,7 @@ behave==1.2.6
 behave-django==1.4.0
 cffi==1.14.0
 cryptography==2.9.2
-Django==3.0.7
+Django==3.1.12
 django-cors-headers==3.4.0
 djangorestframework==3.11.0
 Fabric3==1.14.post1
